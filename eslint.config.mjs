@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // External microservice — has its own scope and runtime (Node + CommonJS).
+    "services/**",
   ]),
 ]);
 

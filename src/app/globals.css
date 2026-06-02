@@ -1,26 +1,621 @@
 @import "tailwindcss";
 
+/*  ============================================================
+    PANDA TENIS · Sunny Sport Club design system
+    ------------------------------------------------------------
+    For families. Bright, friendly, trustworthy.
+
+    Type — two voices:
+      • Display: Sora (variable, friendly geometric — big titles)
+      • Body:    Nunito (rounded, warm, very readable)
+      • Hand:    Caveat (kid-drawn accents, sparingly)
+
+    Palette — sunny club:
+      • Cream  ........ background, warm off-white
+      • Forest ........ deep happy green, the "ink"
+      • Grass  ........ vibrant grass green, the primary
+      • Coral  ........ warm friendly red, the accent
+      • Sun    ........ bright happy yellow
+      • Sky    ........ kids' sky blue
+      • Lilac  ........ soft lavender for playfulness
+    ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Canvas — warm, clean white. Not paper-cream, not grey. */
+  --cream: #FBFAF6;
+  --cream-soft: #FFFFFF;
+  --cream-deep: #F4F1E7;
+  --rule: #E6E2D5;
+  --rule-soft: #EFECE0;
+
+  /* Ink — deep happy forest. Friendly, not industrial. */
+  --forest: #0E2A1F;
+  --forest-soft: #1C3C2F;
+  --forest-mute: #607A6E;
+
+  /* Brand chromatics — bright, sunny, kid-approved. */
+  --grass: #25924F;          /* vibrant grass green   */
+  --grass-soft: #D7EFE0;
+  --grass-deep: #156234;
+
+  --coral: #E2685B;          /* warm coral — a touch calmer */
+  --coral-soft: #F8D8D2;
+  --coral-deep: #B23B30;
+
+  --sun: #F2B33C;            /* warm amber — less neon than before */
+  --sun-soft: #FBE6B0;
+  --sun-deep: #B57F18;
+
+  --sky: #7EC4E8;            /* kids' sky blue        */
+  --sky-soft: #D9EEF8;
+  --sky-deep: #3F88B0;
+
+  --lilac: #C8B3E8;          /* soft purple accent    */
+  --lilac-soft: #E9DFF6;
+  --lilac-deep: #8466B8;
+
+  /* Backwards-compat aliases — legacy components keep working,
+     mapped to the new sunny palette. */
+  --background: var(--cream);
+  --foreground: var(--forest);
+  --surface: var(--cream-soft);
+  --surface-muted: var(--cream-deep);
+  --border: var(--rule);
+  --border-strong: var(--forest-mute);
+  --muted: var(--forest-mute);
+  --ink: var(--forest);
+  --ink-soft: var(--forest-soft);
+  --ink-mute: var(--forest-mute);
+  --paper: var(--cream);
+  --paper-soft: var(--cream-soft);
+  --paper-deep: var(--cream-deep);
+
+  --primary: var(--grass);
+  --primary-foreground: #FFFFFF;
+  --primary-soft: var(--grass-soft);
+
+  --secondary: var(--coral);
+  --secondary-soft: var(--coral-soft);
+  --accent: var(--sun);
+  --accent-soft: var(--sun-soft);
+  --accent-foreground: var(--forest);
+
+  --whatsapp: #128C45;
+  --orange: var(--coral);
+  --orange-soft: var(--coral-soft);
+  --cyan: var(--sky);
+  --cyan-soft: var(--sky-soft);
+  --court: var(--grass);
+  --court-soft: var(--grass-soft);
+  --clay: var(--coral);
+  --clay-soft: var(--coral-soft);
+  --clay-deep: var(--coral-deep);
+
+  --danger: #D74A3A;
+  --danger-soft: #FBE2DC;
+  --warning: var(--sun-deep);
+  --warning-soft: var(--sun-soft);
+  --success: var(--grass);
+  --success-soft: var(--grass-soft);
+  --info: var(--sky-deep);
+  --info-soft: var(--sky-soft);
+
+  /* Tokens — friendly, but a touch more composed (calmer radii). */
+  --ring: rgba(37, 146, 79, 0.32);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 26px;
+
+  /* Soft, layered shadows — ambient depth instead of hard sticker bars.
+     Three tiers: rest → raised (hover) → floating (overlays). */
+  --shadow-sm: 0 1px 2px rgba(14, 42, 31, 0.05), 0 4px 12px -6px rgba(14, 42, 31, 0.10);
+  --shadow-md: 0 2px 4px rgba(14, 42, 31, 0.05), 0 12px 30px -12px rgba(14, 42, 31, 0.18);
+  --shadow-lg: 0 8px 16px -6px rgba(14, 42, 31, 0.10), 0 30px 60px -24px rgba(14, 42, 31, 0.26);
+  --shadow-card: 0 1px 2px rgba(14, 42, 31, 0.04), 0 10px 30px -16px rgba(14, 42, 31, 0.22);
+  --shadow-card-hover: 0 2px 6px rgba(14, 42, 31, 0.06), 0 22px 44px -20px rgba(14, 42, 31, 0.30);
+
+  /* Motion — one shared language. Calm, fluid, no overshoot. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Type stacks */
+  --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+  --font-ui:      "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "Nunito", ui-monospace, monospace;
+  --font-script:  "Caveat", "Bradley Hand", cursive;
+}
+
+/*  ============================================================
+    DARK MODE — admin only (data-theme="dark" se fija solo en /admin).
+    Se sobreescriben los tokens CRUDOS de lienzo (cream y rule) a
+    oscuro y los de tinta (forest) a claro; el resto de alias
+    (--background, --surface, --foreground, --border, --muted…) los
+    siguen automáticamente. Las marcas (grass/coral/sun/sky) y sus
+    tintes -soft se mantienen: lucen como chips claros sobre oscuro.
+    ============================================================ */
+html[data-theme="dark"] {
+  /* Canvas — verdosos oscuros y cálidos, no negro puro. */
+  --cream: #14181a;        /* fondo de la app            */
+  --cream-soft: #1c2224;   /* tarjetas, superficies, inputs */
+  --cream-deep: #262d2f;   /* superficie atenuada / hover */
+  --rule: #313a3c;         /* bordes                      */
+  --rule-soft: #2a3133;
+
+  /* Tinta — blancos cálidos legibles. */
+  --forest: #eef2ef;
+  --forest-soft: #d2dcd5;
+  --forest-mute: #93a39b;
+
+  /* El texto sobre chips/acento amarillo debe seguir siendo oscuro. */
+  --accent-foreground: #17130a;
+
+  /* Sombras más marcadas para dar profundidad sobre fondo oscuro. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 4px 12px -6px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.4), 0 12px 30px -12px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 8px 16px -6px rgba(0, 0, 0, 0.45), 0 30px 60px -24px rgba(0, 0, 0, 0.7);
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px -16px rgba(0, 0, 0, 0.55);
+  --shadow-card-hover: 0 2px 6px rgba(0, 0, 0, 0.4), 0 22px 44px -20px rgba(0, 0, 0, 0.65);
+
+  color-scheme: dark;
+}
+
+/* La barra de scroll en oscuro. */
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #38423f;
+  border-color: var(--cream);
+}
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: var(--grass); }
+
+/* Soft scrollbar */
+::-webkit-scrollbar { width: 12px; height: 12px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--grass-soft);
+  border-radius: 999px;
+  border: 3px solid var(--cream);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--grass); }
+
+html { overflow-x: hidden; }
+body { overflow-x: hidden; }
+
+/* iOS — prevent input zoom */
+@media (max-width: 640px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="search"],
+  input[type="password"],
+  input[type="date"],
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-muted: var(--muted);
+  --color-cream: var(--cream);
+  --color-cream-deep: var(--cream-deep);
+  --color-cream-soft: var(--cream-soft);
+  --color-forest: var(--forest);
+  --color-forest-mute: var(--forest-mute);
+  --color-grass: var(--grass);
+  --color-grass-soft: var(--grass-soft);
+  --color-grass-deep: var(--grass-deep);
+  --color-coral: var(--coral);
+  --color-coral-soft: var(--coral-soft);
+  --color-coral-deep: var(--coral-deep);
+  --color-sun: var(--sun);
+  --color-sun-soft: var(--sun-soft);
+  --color-sun-deep: var(--sun-deep);
+  --color-sky: var(--sky);
+  --color-sky-soft: var(--sky-soft);
+  --color-lilac: var(--lilac);
+  --color-lilac-soft: var(--lilac-soft);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-secondary: var(--secondary);
+  --color-secondary-soft: var(--secondary-soft);
+  --color-orange: var(--orange);
+  --color-orange-soft: var(--orange-soft);
+  --color-cyan: var(--cyan);
+  --color-cyan-soft: var(--cyan-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-paper-soft: var(--paper-soft);
+  --color-court: var(--court);
+  --color-court-soft: var(--court-soft);
+  --color-clay: var(--clay);
+  --color-clay-soft: var(--clay-soft);
+  --font-sans: var(--font-ui);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+  --font-script: var(--font-script);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  /* Two friendly haloes — not paper, just warm light from corners. */
+  background:
+    radial-gradient(1100px 700px at 0% -10%, rgba(242, 179, 60, 0.10), transparent 62%),
+    radial-gradient(900px 600px at 100% 110%, rgba(126, 196, 232, 0.10), transparent 62%),
+    var(--cream);
+  background-attachment: fixed;
 }
 
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  color: var(--forest);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body { background: transparent; }
+
+/* Paper grain — a faint printed texture over everything so flat fills
+   stop reading as default Tailwind blocks. Fixed + very low opacity. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button { cursor: pointer; }
+button:disabled { cursor: not-allowed; }
+
+::selection {
+  background: var(--sun);
+  color: var(--forest);
+}
+
+/* Accessible focus rings — friendly sun-coloured halo, never just removed */
+:focus-visible {
+  outline: 3px solid var(--sun);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline-offset: 4px;
+}
+
+/* Section rhythm — every major section gets the same vertical breath.
+   Use `<section className="section">` (or `section-tight` for compact ones).
+   Mobile = generous, but not excessive. */
+.section {
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+@media (min-width: 640px) {
+  .section { padding-top: 6rem; padding-bottom: 6rem; }
+}
+@media (min-width: 1024px) {
+  .section { padding-top: 7rem; padding-bottom: 7rem; }
+}
+
+.section-tight {
+  padding-top: 3.5rem;
+  padding-bottom: 3.5rem;
+}
+@media (min-width: 640px) { .section-tight { padding-top: 4.5rem; padding-bottom: 4.5rem; } }
+@media (min-width: 1024px) { .section-tight { padding-top: 5.5rem; padding-bottom: 5.5rem; } }
+
+/* The container — keeps a stable max-width and side gutter across all
+   sections, so headings, grids and CTAs align vertically. */
+.wrap {
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-inline: 1.25rem;
+}
+@media (min-width: 640px) { .wrap { padding-inline: 2rem; } }
+@media (min-width: 1024px) { .wrap { padding-inline: 2.5rem; } }
+
+/* ------------------------------------------------------------
+   Typographic primitives — friendly utility classes
+   ------------------------------------------------------------ */
+
+.font-display { font-family: var(--font-display); }
+.font-ui      { font-family: var(--font-ui); }
+.font-script  { font-family: var(--font-script); }
+
+/* The big happy headline — Sora with friendly tracking. */
+.headline {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+}
+
+/* Score-style numerals — tennis scoring 15/30/40 in display weight. */
+.score {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-feature-settings: "tnum" 1, "lnum" 1;
+  letter-spacing: -0.04em;
+  line-height: 0.85;
+}
+
+/* Small caps "tag" — friendly version of the editorial eyebrow. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--grass-deep);
+}
+
+/* Hand-drawn accent. */
+.script-accent {
+  font-family: var(--font-script);
+  font-weight: 600;
+}
+
+/* Soft sticker — rounded badge with bouncy shadow. */
+.sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.5em 1em;
+  border-radius: 999px;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  font-size: 13px;
+  background: var(--cream-soft);
+  color: var(--forest);
+  border: 1px solid var(--rule);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Wavy underline accent — like a chalk-circle on the keyword. */
+.wave-underline {
+  position: relative;
+  white-space: nowrap;
+}
+/* Hand-painted highlighter — irregular brushed edges instead of a perfect
+   pill, so the accent reads as drawn rather than a CSS default. */
+.wave-underline::after {
+  content: "";
+  position: absolute;
+  left: -4%;
+  right: -4%;
+  bottom: 0.02em;
+  height: 0.42em;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='28' viewBox='0 0 240 28' preserveAspectRatio='none'%3E%3Cpath d='M3 17 C 50 9 110 22 178 13 C 214 9 230 18 237 12 C 239 20 234 25 224 25 L 14 26 C 5 26 1 22 3 17 Z' fill='%23F2B33C'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  transform: rotate(-0.4deg);
+}
+
+/* Card — soft rounded with bouncy drop shadow. */
+.card-friendly {
+  background: var(--cream-soft);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out),
+              border-color 0.4s var(--ease-out);
+}
+.card-friendly:hover {
+  transform: translateY(-4px);
+  border-color: var(--rule-soft);
+  box-shadow: var(--shadow-card-hover);
+}
+.card-friendly:active {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-card);
+}
+
+/* Lift utility — apply to any card-shaped element. */
+.lift {
+  transition: transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+}
+.lift:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
+.lift:active { transform: translateY(-1px); }
+
+/* A small floating decoration — pair with absolute positioning. */
+.float-slow { animation: float-slow 8s var(--ease-in-out) infinite; }
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.float-mid { animation: float-mid 6s var(--ease-in-out) infinite; }
+@keyframes float-mid {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Buttons — bouncy, friendly */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  font-family: var(--font-ui);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 14.5px;
+  min-height: 48px;
+  padding: 0 1.6em;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out),
+              background-color 0.3s var(--ease-out);
+  will-change: transform;
+}
+.btn-primary {
+  background: var(--grass);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(14, 42, 31, 0.10), 0 10px 22px -12px rgba(37, 146, 79, 0.55);
+}
+.btn-primary:hover { transform: translateY(-2px); background: var(--grass-deep); box-shadow: 0 2px 6px rgba(14, 42, 31, 0.12), 0 18px 32px -12px rgba(37, 146, 79, 0.55); }
+.btn-primary:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(14, 42, 31, 0.12); }
+
+.btn-coral {
+  background: var(--coral);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(14, 42, 31, 0.10), 0 10px 22px -12px rgba(226, 104, 91, 0.5);
+}
+.btn-coral:hover { transform: translateY(-2px); background: var(--coral-deep); box-shadow: 0 2px 6px rgba(14, 42, 31, 0.12), 0 18px 32px -12px rgba(226, 104, 91, 0.5); }
+.btn-coral:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(14, 42, 31, 0.12); }
+
+.btn-sun {
+  background: var(--sun);
+  color: var(--forest);
+  box-shadow: 0 1px 2px rgba(14, 42, 31, 0.10), 0 10px 22px -12px rgba(242, 179, 60, 0.5);
+}
+.btn-sun:hover { transform: translateY(-2px); background: var(--sun-deep); color: #fff; box-shadow: 0 2px 6px rgba(14, 42, 31, 0.12), 0 18px 32px -12px rgba(242, 179, 60, 0.5); }
+.btn-sun:active { transform: translateY(0); box-shadow: 0 1px 2px rgba(14, 42, 31, 0.12); }
+
+.btn-ghost {
+  background: var(--cream-soft);
+  color: var(--forest);
+  border-color: var(--rule);
+  box-shadow: var(--shadow-sm);
+}
+.btn-ghost:hover { transform: translateY(-2px); border-color: var(--forest-mute); box-shadow: var(--shadow-md); }
+.btn-ghost:active { transform: translateY(0); box-shadow: var(--shadow-sm); }
+
+/* Marquee — slower, more relaxed */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+/* Pause the marquee on hover — visitors can read the text */
+.marquee-track:hover { animation-play-state: paused !important; }
+
+/* Section ornament — a friendly floating bauble that separates sections.
+   Pair with <span aria-hidden className="section-ornament">🎾</span>.
+   Decorative only, hidden on small screens to avoid clutter. */
+.section-ornament {
+  display: none;
+  position: absolute;
+  font-size: 36px;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 4px 10px rgba(14, 42, 31, 0.18));
+}
+@media (min-width: 1024px) {
+  .section-ornament { display: block; }
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(37, 146, 79, 0.45); }
+  70% { box-shadow: 0 0 0 14px rgba(37, 146, 79, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 146, 79, 0); }
+}
+.pulse-ring { animation: pulse-ring 2.2s infinite; }
+
+/* Staggered entrance */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rise-1 { animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both; }
+.rise-2 { animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.18s both; }
+.rise-3 { animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.32s both; }
+.rise-4 { animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.46s both; }
+.rise-5 { animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.6s both; }
+.rise-6 { animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) 0.74s both; }
+
+@keyframes ball-bounce {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(16deg); }
+}
+.ball-bounce { animation: ball-bounce 3.4s var(--ease-in-out) infinite; }
+
+/* Composed entrance — clean rise + fade, no tilt. */
+@keyframes wobble-in {
+  0%   { opacity: 0; transform: translateY(18px) scale(0.985); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+.wobble-in { animation: wobble-in 0.8s var(--ease-out) 0.15s both; }
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  50% { transform: rotate(2deg); }
+}
+.wiggle-on-hover:hover { animation: wiggle 0.5s var(--ease-in-out); }
+
+img { max-width: 100%; display: block; }
+
+@media print {
+  @page { margin: 18mm 14mm; }
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  aside,
+  nav,
+  header[role],
+  [class~="print:hidden"] { display: none !important; }
+  main,
+  .conversation-card,
+  .conversation-body {
+    box-shadow: none !important;
+    background: #ffffff !important;
+    border: 0 !important;
+  }
+  article { page-break-inside: avoid; break-inside: avoid; }
+  [data-sonner-toaster],
+  [role="dialog"]:not(.printable-dialog) { display: none !important; }
 }

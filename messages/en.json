@@ -1,0 +1,922 @@
+{
+  "metadata": {
+    "root": {
+      "titleDefault": "Panda Tenis · Tennis School for Kids",
+      "titleTemplate": "%s · Panda Tenis",
+      "description": "Panda Tenis Association: a tennis school where children learn to love the sport in a fun, safe environment with a progressive level-based methodology."
+    },
+    "home": {
+      "title": "Tennis school for kids in Mijas",
+      "description": "Panda Tenis offers tennis classes for kids from age 3, camps, intensives, and social-impact projects on the Mijas Costa."
+    },
+    "camps": {
+      "title": "Camps",
+      "description": "Panda Tenis camps for kids aged 3 to 14 in summer, Christmas and Easter."
+    },
+    "about": {
+      "title": "About us",
+      "description": "Story of the Panda Tenis Association, a tennis school for kids in Mijas with a social mission and strong sports values."
+    },
+    "inscription": {
+      "title": "Sign up",
+      "description": "Registration form for Panda Tenis school and camps in Mijas Costa."
+    },
+    "privacy": {
+      "title": "Privacy policy",
+      "description": "Privacy policy of the Panda Tenis Association."
+    },
+    "login": {
+      "title": "Sign in"
+    },
+    "noAccess": {
+      "title": "Access denied"
+    }
+  },
+  "common": {
+    "loading": "Loading…",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "search": "Search",
+    "language": "Language",
+    "theme": "Theme",
+    "spanish": "Spanish",
+    "english": "English"
+  },
+  "nav": {
+    "school": "School",
+    "camps": "Camps",
+    "about": "About us",
+    "inscription": "Sign up",
+    "privacyPolicy": "Privacy policy",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "admin": "Admin",
+    "adminPanel": "Admin panel",
+    "signUp": "Sign up",
+    "whatsapp": "WhatsApp"
+  },
+  "footer": {
+    "brandTagline": "School & association · Mijas",
+    "brandBlurb": "A tennis school where kids discover the sport through play, learn values, and grow both on and off the court.",
+    "writeWhatsapp": "Message us on WhatsApp",
+    "pages": "Pages",
+    "contact": "Contact",
+    "management": "Management",
+    "adminPanel": "Admin panel",
+    "labelPhone": "Phone",
+    "labelEmail": "Email",
+    "labelLocation": "Court",
+    "copyright": "© {year} Panda Tenis Association · All rights reserved.",
+    "courseOpen": "Season 25/26 open · Mijas Costa"
+  },
+  "home": {
+    "hero": {
+      "badge": "Registrations open · Season 25/26",
+      "titleStart": "Discover tennis in a",
+      "titleHighlight": "unique way.",
+      "subtitle": "Classes for kids from age 3 in Mijas Costa: a fun methodology, real technique, and a community that grows together on court.",
+      "ctaClasses": "Sign up for classes",
+      "ctaCamps": "Sign up for camp",
+      "ngoPill": "Association · NGO",
+      "course": "Season 25/26",
+      "stats": {
+        "retention": "of kids who try, stay",
+        "fromAge": "years old to start playing",
+        "duration": "per class",
+        "location": "Riviera del Sol"
+      }
+    },
+    "steps": {
+      "eyebrow": "How to sign up",
+      "title": "Three steps to step on court.",
+      "description": "We check spots, age and level so every student starts in the right group.",
+      "stepLabel": "Step",
+      "items": {
+        "write": {
+          "title": "Message us",
+          "description": "Tell us the student's age, experience and availability."
+        },
+        "places": {
+          "title": "We check spots",
+          "description": "We review the group that best fits by level and schedule."
+        },
+        "start": {
+          "title": "On court!",
+          "description": "The student joins the group that best fits their age and level and starts training."
+        }
+      }
+    },
+    "method": {
+      "eyebrow": "The Panda Tenis Method",
+      "title": "Four pillars that make the difference.",
+      "description": "Every class combines technique, cognition, movement and teamwork.",
+      "reasons": {
+        "technique": {
+          "title": "Proper technique from day one",
+          "description": "They build strokes and footwork through tailored games so the technique sticks for life."
+        },
+        "pandaGame": {
+          "title": "Panda Tenis Game",
+          "description": "Focus, concentration and memory through challenges that mix court, strategy and fun."
+        },
+        "psicomotor": {
+          "title": "Motor skills",
+          "description": "Circuits and drills to improve coordination, balance, agility and body confidence."
+        },
+        "fun": {
+          "title": "Fun and friendship",
+          "description": "Every class creates a joyful space to learn, share and feel part of the team."
+        }
+      }
+    },
+    "levels": {
+      "eyebrow": "ITF color system",
+      "title": "A level for every stage.",
+      "description": "Courts, balls and rules adapted to the student's age to guarantee continuous learning.",
+      "ctaReserve": "Reserve a spot",
+      "items": {
+        "red": {
+          "name": "Red",
+          "ages": "ages 3–6",
+          "text": "First strokes, coordination, games and lots of confidence."
+        },
+        "orange": {
+          "name": "Orange",
+          "ages": "ages 7–9",
+          "text": "Basic technique, adapted court and low-pressure balls."
+        },
+        "green": {
+          "name": "Green",
+          "ages": "ages 10–12",
+          "text": "Rallying, serve, simple tactics and first matches."
+        },
+        "yellow": {
+          "name": "Yellow",
+          "ages": "ages 13+",
+          "text": "Regulation ball, technical goals and competition."
+        }
+      }
+    },
+    "marquee": "Panda Tenis · Mijas Costa · ITF Play + Stay · From age 3 ·",
+    "sahara": {
+      "badge": "Panda Tenis in the Sahara",
+      "title": "An association with a social mission",
+      "description": "We bring tennis to children in the Sahara, donate gear, and bring the sport closer to those with fewer opportunities. Tennis as a tool for inclusion.",
+      "cta": "Read our story"
+    },
+    "values": {
+      "eyebrow": "Values",
+      "title": "Tennis as a school of life.",
+      "description": "What they learn on court goes with the kids well beyond the sport.",
+      "items": {
+        "environment": {
+          "title": "Caring environment",
+          "text": "Supervised groups, age-appropriate gear and safe courts."
+        },
+        "sports": {
+          "title": "Sports values",
+          "text": "Respect, effort, teamwork and the drive to improve."
+        },
+        "community": {
+          "title": "Community",
+          "text": "Families, camps and intensives around tennis."
+        },
+        "allCount": {
+          "title": "Everyone counts",
+          "text": "Every student gets recognition for their progress."
+        }
+      }
+    },
+    "gallery": {
+      "eyebrow": "Real Panda",
+      "title": "A glimpse of our court.",
+      "description": "Real photos from day to day: classes, challenges, gear and the court at sunset.",
+      "tags": {
+        "court": "Court",
+        "start": "Beginners",
+        "technique": "Technique",
+        "material": "Gear",
+        "psicomotor": "Motor skills",
+        "riviera": "Riviera"
+      }
+    },
+    "faq": {
+      "eyebrow": "Frequently asked questions",
+      "title": "Everything you need to know.",
+      "items": [
+        {
+          "question": "How long is a tennis class?",
+          "answer": "Each class lasts 1 hour."
+        },
+        {
+          "question": "How do I sign up for the Tennis School?",
+          "answer": "You can fill in the registration form on this site or reach out directly via WhatsApp or email to check available spots and complete the form."
+        },
+        {
+          "question": "If the student misses a class, what happens?",
+          "answer": "Only classes missed for a documented illness can be made up. For other reasons the class is considered lost."
+        },
+        {
+          "question": "If it rains, is there class?",
+          "answer": "When it rains or the court isn't in good condition, the school announces the cancellation as soon as the decision is made."
+        },
+        {
+          "question": "What does my child need to bring to class?",
+          "answer": "Sportswear and sneakers, water and a racket if they have one. If not, Panda Tenis lends one."
+        },
+        {
+          "question": "Are there classes for adults?",
+          "answer": "The school's main focus is on kids and teens, though depending on availability we may explore options for adults. Get in touch to check."
+        }
+      ]
+    },
+    "cta": {
+      "kicker": "No commitment · Limited spots",
+      "title": "Ready to start?",
+      "description": "Pick whatever fits you best: regular season or holiday camps. Each one has its own form."
+    }
+  },
+  "registrationPaths": {
+    "kicker": "Two ways to start",
+    "title": "What would you like to sign your child up for?",
+    "description": "We run the regular weekly season and holiday camps for specific dates. Message us on WhatsApp and we'll send the private form once the place is confirmed.",
+    "school": {
+      "badge": "Season 2025 · 2026",
+      "title": "Regular classes",
+      "fallbackLabel": "September to June",
+      "bullets": [
+        "One class per week throughout the school year",
+        "Groups by level (Red, Orange, Green, Yellow)",
+        "<strong>Personal attention</strong> in small groups by level",
+        "You pick preferred days and time slots when signing up"
+      ],
+      "cta": "Sign up for classes",
+      "secondary": "See levels"
+    },
+    "camps": {
+      "badgeOne": "{count} active session",
+      "badgeMany": "{count} active sessions",
+      "title": "Camps",
+      "seasons": "Summer · Christmas · Easter",
+      "bullets": [
+        "Intensive days during school holidays",
+        "Tennis + multi-sport, crafts and languages",
+        "Any level welcome, even if you're not enrolled in the school",
+        "Separate registration for each session"
+      ],
+      "nextLabel": "Next:",
+      "ctaSingle": "Sign up for camp",
+      "ctaMany": "See available camps",
+      "secondary": "Program"
+    }
+  },
+  "levelFinder": {
+    "kicker": "Find the level in 5 seconds",
+    "title": "Which level fits your child?",
+    "description": "Pick their age and we'll show which color of the ITF system they'd start at.",
+    "legend": "Student's age",
+    "olderHint": "Older than 16? Message us on WhatsApp and we'll look at options.",
+    "ageAriaLabel": "age {age} · level {level}",
+    "forAge": "For age {age}",
+    "levelLabel": "Level {name}",
+    "ballLabel": "Ball · {ball}",
+    "ctaReserve": "Reserve a spot",
+    "levels": {
+      "rojo": {
+        "name": "Red",
+        "ages": "ages 3 to 6",
+        "ball": "Foam",
+        "pitch": "First strokes, motor-skill games and lots of confidence on a short court.",
+        "hooks": [
+          "Foam ball",
+          "Mini court",
+          "Learning by playing"
+        ]
+      },
+      "naranja": {
+        "name": "Orange",
+        "ages": "ages 7 to 9",
+        "ball": "Low pressure",
+        "pitch": "Basic forehand, backhand and serve on an intermediate court.",
+        "hooks": [
+          "Low-pressure ball",
+          "18 m court",
+          "Real rallies"
+        ]
+      },
+      "verde": {
+        "name": "Green",
+        "ages": "ages 10 to 12",
+        "ball": "50% pressure",
+        "pitch": "Long rallies, first matches and tactical work.",
+        "hooks": [
+          "Mid-pressure",
+          "Full court",
+          "Group matches"
+        ]
+      },
+      "amarillo": {
+        "name": "Yellow",
+        "ages": "ages 13 and up",
+        "ball": "Regulation",
+        "pitch": "Official ball, technical goals and competition option.",
+        "hooks": [
+          "Official ITF ball",
+          "Physical & mental",
+          "Federated path"
+        ]
+      }
+    }
+  },
+  "contactBand": {
+    "eyebrow": "Contact",
+    "title": "We chat, check spots and find the group that fits.",
+    "description": "Get in touch with the school to check availability for the 25/26 season and reserve your spot.",
+    "whatsapp": "Message on WhatsApp",
+    "form": "Registration form",
+    "labelPhone": "Phone",
+    "labelEmail": "Email",
+    "labelLocation": "Court"
+  },
+  "floatingCallout": {
+    "kicker": "Spots open",
+    "title": "Only a few spots left",
+    "cta": "Book",
+    "dismiss": "Dismiss notice"
+  },
+  "camps": {
+    "hero": {
+      "eyebrow": "Panda Tenis Camp",
+      "title": "Camps for kids aged 3 to 14.",
+      "description": "Fun, friendship and learning with tennis as the main sport and a program that mixes court, games, creativity and recognition.",
+      "ctaSignUp": "Sign up here",
+      "ctaActivities": "See activities"
+    },
+    "program": {
+      "eyebrow": "Program",
+      "title": "A week to play, grow and go home with a story.",
+      "description": "Camp blends tennis training, multi-sport, crafts, cognitive challenges and languages so every day feels fresh.",
+      "activities": {
+        "tennis": {
+          "title": "Daily tennis",
+          "text": "Matches, team challenges and adapted games every day."
+        },
+        "multisport": {
+          "title": "Multi-sport",
+          "text": "Activities to discover new skills and move joyfully."
+        },
+        "crafts": {
+          "title": "Crafts",
+          "text": "Creative breaks to imagine and work together."
+        },
+        "memory": {
+          "title": "Memory & focus",
+          "text": "Panda Tenis Game challenges to think, remember and decide better."
+        },
+        "languages": {
+          "title": "Languages through play",
+          "text": "Activities in Spanish and English to learn without feeling like school."
+        },
+        "water": {
+          "title": "Water in summer",
+          "text": "Pool and water games when the calendar and weather allow."
+        },
+        "tournament": {
+          "title": "Friday tournament",
+          "text": "Every Friday we compete in a tennis tournament and finish with a medal and prize ceremony for everyone."
+        },
+        "castle": {
+          "title": "Bouncy castle",
+          "text": "A bouncy castle every week: an inflatable water castle in summer and the classic bouncy castle the rest of the year."
+        }
+      },
+      "featured": "Featured"
+    },
+    "seasons": {
+      "eyebrow": "Seasons",
+      "title": "Camps at the key moments of the school year.",
+      "description": "Panda Tenis runs camps during school breaks so families have an active, local option with strong values.",
+      "summer": "Summer",
+      "christmas": "Christmas",
+      "easter": "Easter",
+      "register": "Sign up",
+      "comingSoon": "Coming soon"
+    },
+    "trophies": {
+      "kicker": "Trophy ceremony",
+      "title": "Every week ends celebrating effort.",
+      "description": "We close with a ceremony where every participant is recognized for attitude, progress and participation. Competition counts, but the journey counts too.",
+      "ageLabel": "Recommended age",
+      "ageRange": "3-14",
+      "ageNote": "Groups adapted by age, level and autonomy."
+    },
+    "status": {
+      "upcoming": "Coming soon",
+      "active": "In progress",
+      "finished": "Finished"
+    }
+  },
+  "about": {
+    "hero": {
+      "eyebrow": "Our story",
+      "title": "A place where kids discover tennis by playing.",
+      "description": "Panda Tenis isn't just a school. It's a family growing around sport, respect, effort and joy.",
+      "cta": "Sign up now"
+    },
+    "origin": {
+      "eyebrow": "The origin",
+      "title": "Tennis as a school of life.",
+      "description": "The project was born from many years teaching kids and teens, convinced that tennis teaches focus, concentration, commitment, effort, sacrifice and respect.",
+      "p1": "Tennis teaches you not to give up, to fight every point, to build strategies and adapt with intelligence in every situation. But the most valuable thing is the people, friendships and experiences that stay.",
+      "p2": "After many years dedicated to teaching, Panda Tenis became an association to reach further: donating gear, easing access to the sport and building social-impact projects that promote equal opportunities.",
+      "tags": [
+        "Mijas Costa",
+        "From age 3",
+        "Registered association"
+      ]
+    },
+    "association": {
+      "title": "Panda Tenis Association",
+      "description": "Based in Mijas, we work passionately to instill sport values, promote a healthy lifestyle and prove that a child who plays is a happy child.",
+      "cta": "Chat with the school"
+    },
+    "goals": {
+      "eyebrow": "Goals",
+      "title": "From the court to the community.",
+      "description": "The association blends school, events and social projects to take tennis further.",
+      "items": {
+        "promote": {
+          "title": "Promote tennis",
+          "text": "So every kid, regardless of means, can enjoy this sport."
+        },
+        "values": {
+          "title": "Instill positive values",
+          "text": "Communication, integration, socialization, effort and respect through sport."
+        },
+        "events": {
+          "title": "Run sports events",
+          "text": "Camps, intensives, parties and recreational activities in a welcoming setting."
+        },
+        "help": {
+          "title": "Help kids in need",
+          "text": "Collecting and donating gear to bring tennis to more communities."
+        }
+      }
+    },
+    "participate": {
+      "eyebrow": "Get involved",
+      "title": "Join a family that moves tennis with joy.",
+      "description": "Take part in events, donate gear or share the Panda Tenis vision. Together we can bring the sport and its values to more kids.",
+      "ctaSignUp": "Sign up",
+      "ctaCamps": "See camps"
+    }
+  },
+  "inscription": {
+    "openBadge": "Registrations open",
+    "title": "Reserve your spot at Panda Tenis."
+  },
+  "wizard": {
+    "steps": {
+      "info": "Course information",
+      "student": "1. Student details",
+      "additional": "Additional info",
+      "terms": "Terms & conditions"
+    },
+    "nav": {
+      "back": "Back",
+      "next": "Next",
+      "submit": "Submit registration",
+      "submitting": "Sending…",
+      "progressMobile": "Step {step} of {total}"
+    },
+    "success": {
+      "title": "Registration sent!",
+      "description": "We've received your request for <strong>{course}</strong>. We'll get back to you within 24 hours.",
+      "backHome": "Back to start"
+    },
+    "info": {
+      "title": "Registration form",
+      "helloBadge": "EN",
+      "hello": "Hello!",
+      "intro": "I'm Darío, director of the Panda Tenis Association.",
+      "alsoPlatform": "We'll also sign you up on our digital platform, where you'll be able to track achievements and progress in a fun and motivating way.",
+      "changeCourse": "Change course",
+      "pickCourse": "Pick the course or camp you'd like to sign up for:",
+      "seeYouOnCourt": "See you on court!"
+    },
+    "email": {
+      "title": "Enter your email",
+      "placeholder": "your.email@example.com",
+      "verifyBtn": "Verify email",
+      "errorEmpty": "Please enter an email",
+      "hint1": "Enter your email. If you've been with the school before, try the same email you used last season.",
+      "hint2": "We will not show previous details for privacy; the family always completes the current form.",
+      "verified": "Email verified",
+      "existingStudent": "Existing student",
+      "newRecord": "Form ready",
+      "personalEmail": "Personal email address",
+      "startOver": "Start over"
+    },
+    "student": {
+      "title": "Student details",
+      "intro": "Enter the student's details. If under-age, you'll be able to add your own information as parent/guardian below.",
+      "firstName": "Student first name",
+      "firstNamePlaceholder": "Enter the first name",
+      "lastName": "Last name",
+      "lastNamePlaceholder": "Enter the last name",
+      "phone": "Mobile phone",
+      "phonePlaceholder": "Enter the mobile number",
+      "birthDate": "Date of birth",
+      "gender": "Gender",
+      "genderSelect": "Select gender",
+      "genderMale": "Male",
+      "genderFemale": "Female",
+      "genderOther": "Other",
+      "relations": {
+        "title": "Family relations",
+        "counter": "{count}/3",
+        "fullName": "Full name",
+        "fullNamePlaceholder": "First name and last name",
+        "relationship": "Relationship",
+        "relationshipPlaceholder": "Father, Mother, Guardian…",
+        "phone": "Phone",
+        "phonePlaceholder": "600 000 000",
+        "email": "Email",
+        "emailPlaceholder": "email@example.com (optional)",
+        "add": "Add family member",
+        "remove": "Remove"
+      }
+    },
+    "additional": {
+      "title": "Additional info",
+      "hint": "Leave blank if not applicable",
+      "allergies": "Allergies",
+      "illnesses": "Illnesses",
+      "injuries": "Injuries",
+      "scheduling": {
+        "title": "Class availability",
+        "hint": "This helps us place the student in the group that best fits your afternoons. Tick everything that works for you.",
+        "daysLabel": "Days available",
+        "timesLabel": "Preferred time slots",
+        "noteLabel": "Schedule note (optional)",
+        "notePlaceholder": "e.g. can't pick up at 19:30, sister in the Orange group…"
+      },
+      "days": {
+        "L": "Monday",
+        "M": "Tuesday",
+        "X": "Wednesday",
+        "J": "Thursday",
+        "V": "Friday",
+        "S": "Saturday",
+        "D": "Sunday"
+      },
+      "timeBlocks": {
+        "tardeTemprano": "Early afternoon",
+        "tardeMedia": "Mid afternoon",
+        "tardeTardia": "Late afternoon",
+        "sabadoManana": "Saturday morning"
+      }
+    },
+    "terms": {
+      "title": "Legal texts",
+      "intro": "Review the following legal texts and sign the form to proceed.",
+      "termsTitle": "Terms & conditions",
+      "termsBody": {
+        "heading": "Panda Tenis Association — Terms & conditions",
+        "p1": "By registering, parents or legal guardians accept that the student has no illnesses, allergies or other limitations that might interfere with their participation in the scheduled activities.",
+        "p2": "In case of any relevant medical condition, accurate notification to the Panda Tenis Association is required.",
+        "p3": "It is the sole responsibility of the parents or legal guardians to ensure drop-off and pick-up of the student at the facility where the activity takes place, both at the start and the end.",
+        "p4": "Registration implies acceptance of all terms and conditions stated above."
+      },
+      "imagesTitle": "Image consent",
+      "imagesBody": {
+        "heading": "Panda Tenis Association — Image consent",
+        "p1": "We want to inform you that during your children's sports activities we'll take photos and videos to document their progress and celebrate their achievements.",
+        "p2": "These images will be used exclusively for internal use by the Panda Tenis Association, as well as promotional material on social networks and our websites.",
+        "p3": "We commit to use these images respectfully and to protect the privacy of every child.",
+        "p4": "If you do not authorise the use of the minor's images, please let the Panda Tenis Association know in advance."
+      },
+      "consentLabel": "I give my consent for the creation of multimedia content.",
+      "signerFirst": "Signer's first name",
+      "signerLast": "Signer's last name",
+      "autoAccept": "<strong>Terms & conditions.</strong> By signing this form you automatically accept all terms and conditions.",
+      "signLabel": "Signature",
+      "signOpen": "Open signature pad",
+      "signEdit": "Edit",
+      "signClear": "Clear"
+    },
+    "signature": {
+      "title": "Sign here",
+      "hint": "Sign with your finger, mouse or stylus inside the box.",
+      "clear": "Clear",
+      "confirm": "Confirm signature",
+      "close": "Close"
+    }
+  },
+  "privacy": {
+    "kicker": "Panda Tenis",
+    "title": "Privacy policy",
+    "updated": "Last updated: May 2026. We've replaced the generic WordPress policy with a clear version focused on how the school actually handles requests.",
+    "contactTitle": "Privacy contact",
+    "emailLabel": "Email:",
+    "phoneLabel": "Phone:",
+    "sections": [
+      {
+        "title": "Who we are",
+        "text": "This site represents the Panda Tenis Association. You can reach us via the phone, WhatsApp or email shown on the site."
+      },
+      {
+        "title": "Data you may send us",
+        "text": "When you write via WhatsApp, phone or email, we may receive your name, contact details and the information needed to answer your request about classes, camps or tournaments."
+      },
+      {
+        "title": "Purpose",
+        "text": "We use the data to handle enquiries, registrations, communication with families and to run Panda Tenis sports activities."
+      },
+      {
+        "title": "Retention",
+        "text": "We keep the information for the time needed to handle the request, run the activity and meet applicable administrative obligations."
+      },
+      {
+        "title": "Rights",
+        "text": "You can request access, rectification or deletion of your data by writing to info@pandatenis.com."
+      },
+      {
+        "title": "Embedded content and external links",
+        "text": "The site may link to WhatsApp, Google Maps or other external services. Opening those links applies their own privacy policies."
+      }
+    ]
+  },
+  "login": {
+    "asideTag": "Panda Tenis · Mijas Costa",
+    "asideTitleLine1": "Your school,",
+    "asideTitleLine2": "with a precise serve.",
+    "asideDescription": "Manage students, attendance, payments and family communication in a single panel built for coordinators who'd rather act than dig.",
+    "stats": {
+      "students": "active students",
+      "attendance": "average attendance",
+      "receipts": "lost receipts"
+    },
+    "formTitle": "Sign in",
+    "formSubtitle": "Restricted to the school team.",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "submit": "Enter the panel",
+    "submitting": "Signing in…",
+    "support": "Trouble signing in? Email support and we rotate the password right away.",
+    "errors": {
+      "backendUnavailable": "The backend connection isn't configured. Let the tech team know.",
+      "invalid": "The email or password is incorrect.",
+      "toastTitle": "We couldn't sign you in"
+    },
+    "successToast": "Welcome back!"
+  },
+  "noAccess": {
+    "title": "No access",
+    "description": "Your account doesn't have admin permissions. If you think this is a mistake, contact the school coordinator.",
+    "backHome": "Back to start"
+  },
+  "admin": {
+    "topbar": {
+      "language": "Language",
+      "theme": "Theme",
+      "search": "Search",
+      "profile": "Profile",
+      "darkMode": "Dark mode",
+      "lightMode": "Light mode"
+    },
+    "sidebar": {
+      "favorites": "Favorites",
+      "enableNotifTitle": "Enable alerts",
+      "enableNotifText": "Get browser notifications for WhatsApp.",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "signOut": "Sign out",
+      "signOutErrorTitle": "We couldn't sign you out",
+      "signOutSuccess": "See you soon",
+      "groups": {
+        "dashboard": "Dashboard",
+        "community": "Community",
+        "school": "School",
+        "camps": "Camps",
+        "marketing": "Marketing",
+        "finance": "Finance",
+        "control": "Club control"
+      },
+      "items": {
+        "dashboard": "Dashboard",
+        "calendar": "Calendar",
+        "students": "Students",
+        "leads": "Leads",
+        "attendance": "Attendance",
+        "groups": "Groups & classes",
+        "planner": "Planner",
+        "privateLessons": "Private lessons",
+        "medals": "Medals",
+        "reports": "Reports",
+        "gallery": "Gallery",
+        "campusBoard": "Camps",
+        "registrations": "Registrations",
+        "chats": "Conversations",
+        "sends": "Broadcasts",
+        "connection": "Connection",
+        "payments": "Payments & receipts",
+        "settings": "Settings"
+      }
+    },
+    "mobileNav": {
+      "panel": "Panel",
+      "students": "Students",
+      "payments": "Payments",
+      "whatsapp": "WhatsApp",
+      "attendance": "Attendance",
+      "registrations": "Forms"
+    },
+    "breadcrumbs": {
+      "dashboard": "Dashboard",
+      "students": "Students",
+      "studentDetail": "Profile",
+      "attendance": "Attendance",
+      "reports": "Reports",
+      "privateLessons": "Private lessons",
+      "medals": "Medals",
+      "gallery": "Gallery",
+      "payments": "Payments",
+      "registrations": "Registrations",
+      "leads": "Leads",
+      "whatsapp": "WhatsApp",
+      "chat": "Chat",
+      "chats": "Conversations",
+      "connection": "Connection",
+      "groups": "Groups",
+      "calendar": "Calendar",
+      "campus": "Campus",
+      "settings": "Settings"
+    },
+    "pages": {
+      "calendar": {
+        "title": "Activity calendar",
+        "description": "Plan the school's year at a glance. Tap any day to add an event.",
+        "eventsVisible": "{count} events visible"
+      },
+      "attendance": {
+        "title": "Attendance control",
+        "description": "Mark who showed up, who let us know, and who missed without notice. The history feeds the dashboard indicator."
+      },
+      "students": {
+        "title": "Student management",
+        "description": "Each student's profile, with guardian, assigned group and coach notes."
+      },
+      "leads": {
+        "title": "Interested leads",
+        "description": "Families who asked for info from the site or directly. Call them or start WhatsApp with an approved template."
+      },
+      "groups": {
+        "title": "Group management",
+        "description": "Plan groups by level, assign a coach and check capacity."
+      },
+      "planner": {
+        "title": "Weekly planner",
+        "description": "Weekly view of every group and its students. Auto-assignment by day/time preferences, with manual fine-tuning."
+      },
+      "privateLessons": {
+        "title": "Private lessons",
+        "description": "1-on-1 sessions outside the group. Mark each class as paid to add it to the monthly revenue."
+      },
+      "medals": {
+        "title": "Medals & recognitions",
+        "description": "The school's gamification system. Recognize effort and keep motivation high."
+      },
+      "reports": {
+        "title": "Quarterly reports",
+        "description": "Per-quarter technical feedback with progress bars, comments and a send-to-family flow."
+      },
+      "gallery": {
+        "title": "Club gallery",
+        "description": "Upload photos and videos, share moments with families and always respect image consent."
+      },
+      "campus": {
+        "title": "Camps",
+        "description": "Custom sessions outside the regular school calendar: summer camp, Christmas or themed stages. Each session is defined with its own name and dates."
+      },
+      "registrations": {
+        "title": "Registrations",
+        "description": "Registrations received for the school and camps."
+      },
+      "whatsappChats": {
+        "title": "WhatsApp conversations",
+        "description": "Chat one-on-one with each family from the panel. Incoming messages appear in real time."
+      },
+      "whatsappConnection": {
+        "title": "WhatsApp connection",
+        "description": "Status of the number connected to WhatsApp Business Cloud API and inbound webhook configuration."
+      },
+      "whatsapp": {
+        "title": "WhatsApp",
+        "description": "Inbox, templates and bulk sends with Meta Cloud API. Import families from CSV or TSV without fighting the format."
+      },
+      "payments": {
+        "title": "Payments & receipts",
+        "description": "Manage receipts, mark them as paid and automatically trigger the official numbering."
+      },
+      "settings": {
+        "title": "School settings",
+        "description": "General data and thresholds that feed the panel and receipts."
+      },
+      "dashboard": {
+        "greeting": "Hi, {name} 👋",
+        "subtitle": "Here's the school's pulse.",
+        "kpiCollected": "Collected this month",
+        "kpiInvoiced": "of {amount} invoiced",
+        "kpiStudents": "Active students",
+        "kpiStudentsHint": "+{count} this month · {progress}% of goal",
+        "kpiAttendance": "Attendance (30d)",
+        "kpiAttendanceHint": "Average of the last 30 days",
+        "kpiLeads": "New leads",
+        "kpiLeadsHint": "This week",
+        "secStudents": "Students",
+        "secAttendance": "Attendance",
+        "secLeads": "Leads",
+        "secPrivate": "Private lessons",
+        "secPayments": "Payments & collections",
+        "secRevenue": "Revenue trend",
+        "secCalendar": "Class calendar",
+        "newThisMonth": "New this month",
+        "goalProgress": "<strong>{progress}%</strong> of goal. {total} total.",
+        "statThisMonth": "this month",
+        "statTotal": "total",
+        "statLast30": "last 30d",
+        "statThisWeek": "this week",
+        "statGenerated": "earned",
+        "statPending": "pending",
+        "statReceipts": "receipts",
+        "statVsPrev": "vs previous month",
+        "statUpcoming14d": "next 14d",
+        "noAttendance": "No attendance yet",
+        "noAttendanceDesc": "Once you log the first classes you'll see the weekly trend here.",
+        "noPayments": "No pending payments",
+        "noPaymentsDesc": "When a student has an open receipt, it'll show up here.",
+        "noRevenue": "No revenue logged",
+        "noRevenueDesc": "As soon as you mark a payment paid you'll see the curve grow here.",
+        "noClasses": "No classes scheduled",
+        "noClassesDesc": "Schedule the next sessions from the Groups or Calendar section.",
+        "noGroup": "No group",
+        "viewCalendar": "View full calendar",
+        "quickActions": "Quick actions",
+        "act": {
+          "createStudent": "Create new student",
+          "sendBroadcast": "Send broadcast",
+          "reviewRegistrations": "Review registrations",
+          "awardMedal": "Award a medal",
+          "paymentReminder": "Payment reminder",
+          "uploadPhotos": "Upload photos to gallery",
+          "scheduleCamp": "Schedule camp or intensive",
+          "takeAttendance": "Take attendance",
+          "openWhatsapp": "Open WhatsApp"
+        },
+        "dueOverdue": "Overdue",
+        "duePending": "Pending",
+        "createStudentAria": "Create new student",
+        "viewPaymentsAria": "View payments",
+        "viewCalendarAria": "View calendar",
+        "concept": "due {date}"
+      }
+    },
+    "command": {
+      "title": "Command palette",
+      "placeholder": "Search students, payments, leads or go to…",
+      "empty": "No results. Try another term.",
+      "sections": {
+        "results": "Results",
+        "goto": "Go to",
+        "quick": "Quick actions"
+      },
+      "quick": {
+        "newStudent": "New student",
+        "recordPayment": "Record payment",
+        "takeAttendance": "Take attendance",
+        "sendBroadcast": "Send broadcast",
+        "openWhatsapp": "Open WhatsApp"
+      }
+    },
+    "error": {
+      "title": "Something went wrong",
+      "description": "We could not load this section. It may be temporary — please try again.",
+      "retry": "Try again"
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you are looking for does not exist or has moved.",
+      "back": "Back to dashboard"
+    },
+    "activity": {
+      "title": "Activity",
+      "empty": "No recent activity."
+    }
+  }
+}

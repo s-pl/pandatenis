@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Panda Tenis
 
-## Getting Started
+Web pública y panel privado de Panda Tenis construido con Next.js, Vercel, Supabase y Meta WhatsApp Cloud API.
 
-First, run the development server:
+## Incluye
+
+- Web pública con escuela, campamentos, torneos, quiénes somos, privacidad e inscripción.
+- Panel privado para alumnos, grupos, asistencia, pagos, recibos, informes, galería, leads, inscripciones y calendario.
+- WhatsApp con bandeja inbound, plantillas aprobadas de Meta, cola de reintentos y envíos masivos desde CSV/TSV.
+- Supabase Auth, RLS, Storage privado para media de alumnos y seeder de admin.
+
+## Desarrollo Local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre `http://localhost:3000`. La app necesita Supabase configurado para usar el panel y guardar inscripciones reales.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Variables De Entorno
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Copia `.env.example` a `.env.local` y rellena valores reales.
 
-## Learn More
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_URL=
+SUPABASE_SERVICE_ROLE_KEY=
+CRON_SECRET=
+META_WHATSAPP_ACCESS_TOKEN=
+META_PHONE_NUMBER_ID=
+META_WABA_ID=
+META_APP_SECRET=
+META_WEBHOOK_VERIFY_TOKEN=
+META_GRAPH_API_VERSION=v20.0
+```
 
-To learn more about Next.js, take a look at the following resources:
+En Meta Business Manager configura el webhook en `https://<dominio>/api/whatsapp/inbound`, usa el mismo `META_WEBHOOK_VERIFY_TOKEN` y suscribe `messages`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Supabase
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Crea un proyecto Supabase.
+2. Aplica todas las migraciones de `supabase/migrations` en orden.
+3. Configura las variables de Vercel/Supabase.
+4. Crea o repara el usuario admin:
 
-## Deploy on Vercel
+```bash
+ADMIN_EMAIL=admin@pandatenis.com ADMIN_PASSWORD='pon-una-segura' npm run seed:admin
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Si no defines `ADMIN_PASSWORD`, el script genera una contraseña segura y la imprime una sola vez.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## WhatsApp
+
+- El webhook inbound es público, pero valida firma HMAC con `META_APP_SECRET`.
+- La cola de reintentos se procesa con:
+
+```bash
+curl -X POST https://<dominio>/api/admin/whatsapp/process-queue \
+  -H "Authorization: Bearer $CRON_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"limit":10}'
+```
+
+Programa ese endpoint como Vercel Cron o cron externo cada pocos minutos.
+
+## Checks
+
+```bash
+npm run typecheck
+npm run lint
+npm run build
+npm audit --omit=dev
+npm run smoke
+```
+
+`npm run smoke` espera que haya un servidor levantado en `http://127.0.0.1:3000` o que definas `SMOKE_BASE_URL`.

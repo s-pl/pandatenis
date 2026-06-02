@@ -1,0 +1,26 @@
+project_id = "pandatenis-area-privada"
+
+[api]
+enabled = true
+schemas = ["public", "storage"]
+extra_search_path = ["public", "extensions"]
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://pandatenis.vercel.app", "https://app.pandatenis.com"]
+
+[storage]
+enabled = true
+
+[functions.send-receipt-whatsapp]
+verify_jwt = true
+
+[functions.send-campaign-whatsapp]
+verify_jwt = true
+
+[functions.send-media-whatsapp]
+verify_jwt = true
+
+[functions.send-event-reminder]
+verify_jwt = false
