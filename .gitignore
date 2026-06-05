@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
+# ---- Dependencies ----
 /node_modules
 /.pnp
 .pnp.*
@@ -10,32 +10,61 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
-
-# next.js
+# ---- Next.js / build output ----
 /.next/
 /out/
-
-# production
 /build
+/dist
 
-# misc
-.DS_Store
-*.pem
+# ---- Caches ----
+.turbo
+.swc/
+.eslintcache
+*.tsbuildinfo
+.cache/
 
-# debug
+# ---- Testing / coverage ----
+/coverage
+/playwright-report
+/test-results
+
+# ---- TypeScript ----
+next-env.d.ts
+
+# ---- Environment variables (never commit secrets) ----
+.env
+.env.*
+!.env.example
+
+# ---- Vercel ----
+.vercel
+
+# ---- Supabase (se mantienen migrations/ y config.toml; se ignoran cachés locales) ----
+supabase/.temp/
+supabase/.branches/
+supabase/.env
+
+# ---- Logs ----
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-.env*
+# ---- OS ----
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
 
-# vercel
-.vercel
+# ---- Editors / IDE ----
+.idea/
+*.swp
+*.swo
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# ---- Misc / secrets ----
+*.pem
