@@ -7,8 +7,6 @@ import {
   BellRing,
   CalendarCheck,
   CreditCard,
-  MessageCircleWarning,
-  ShieldQuestion,
   UserRoundCheck,
   X,
 } from "lucide-react";
@@ -41,8 +39,6 @@ const typeIcon: Record<ActionCenterItem["type"], ReactNode> = {
   lead_followup: <UserRoundCheck className="h-4 w-4" />,
   registration_pending: <BellRing className="h-4 w-4" />,
   class_attendance: <CalendarCheck className="h-4 w-4" />,
-  template_review: <ShieldQuestion className="h-4 w-4" />,
-  whatsapp_queue: <MessageCircleWarning className="h-4 w-4" />,
 };
 
 export function ActionCenter({ items }: { items: ActionCenterItem[] }) {
@@ -80,7 +76,7 @@ export function ActionCenter({ items }: { items: ActionCenterItem[] }) {
         <EmptyState
           icon={<BellRing className="h-5 w-5" />}
           title="Nada urgente pendiente"
-          description="Pagos, contactos, WhatsApp y asistencia están tranquilos por ahora."
+          description="Pagos, contactos y asistencia están tranquilos por ahora."
         />
       ) : (
         <ul className="grid gap-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ImagePlus, Images, Send, ShieldAlert, Trash2, UploadCloud } from "lucide-react";
+import { ImagePlus, Images, ShieldAlert, Trash2, UploadCloud } from "lucide-react";
 import { FormEvent, useMemo, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -11,11 +11,7 @@ import { Field, Input, Select } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { createClient } from "@/lib/supabase/client";
-import {
-  deleteMediaAsset,
-  registerMediaAsset,
-  shareMediaByWhatsapp,
-} from "@/lib/admin/actions/media";
+import { deleteMediaAsset, registerMediaAsset } from "@/lib/admin/actions/media";
 import { formatLongDate } from "@/lib/format";
 
 type Asset = {
@@ -61,21 +57,6 @@ export function GalleryManager({
       const result = await deleteMediaAsset(target.id);
       if (result.ok) toast.success("Archivo eliminado");
       else toast.error("No se ha podido eliminar", { description: result.error });
-    });
-  }
-
-  function handleShare(asset: Asset) {
-    startTransition(async () => {
-      const result = await shareMediaByWhatsapp({ assetId: asset.id });
-      if (result.ok) {
-        toast.success(result.data?.status === "sent" ? "Envío realizado" : "Envío en cola", {
-          description:
-            result.data?.status === "queued"
-              ? "Cloud API lo reintentará automáticamente desde la cola."
-              : "La familia lo recibirá en segundos.",
-        });
-      }
-      else toast.error("No se ha podido enviar", { description: result.error });
     });
   }
 
@@ -159,16 +140,7 @@ export function GalleryManager({
                         <p className="mt-1 text-xs text-[var(--muted)]">
                           {asset.studentName} · {formatLongDate(asset.uploadedAt)}
                         </p>
-                        <div className="mt-4 flex items-center justify-between gap-2">
-                          <Button
-                            size="sm"
-                            variant={asset.consentChecked ? "outline" : "ghost"}
-                            disabled={!asset.consentChecked}
-                            iconLeft={<Send className="h-3.5 w-3.5" />}
-                            onClick={() => handleShare(asset)}
-                          >
-                            Enviar por WhatsApp
-                          </Button>
+                        <div className="mt-4 flex items-center justify-end gap-2">
                           <button
                             type="button"
                             onClick={() => handleDelete(asset)}

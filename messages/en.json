@@ -478,7 +478,15 @@
   },
   "inscription": {
     "openBadge": "Registrations open",
-    "title": "Reserve your spot at Panda Tenis."
+    "title": "Reserve your spot at Panda Tenis.",
+    "whatsappBadge": "Registration via WhatsApp",
+    "heading": "First we chat, then I send you your private form.",
+    "body": "For regular classes or camp, message me on WhatsApp. Once we confirm your spot, schedule or dates, I'll create a basic form from the dashboard and send you a link to complete all the student's details.",
+    "normalClasses": "Regular classes",
+    "campus": "Camp",
+    "callPrefix": "You can also call",
+    "waNormalText": "Hi, I'd like information about Panda Tenis regular classes.",
+    "waCampusText": "Hi, I'd like information about the Panda Tenis camp."
   },
   "wizard": {
     "steps": {
@@ -495,16 +503,16 @@
       "progressMobile": "Step {step} of {total}"
     },
     "success": {
-      "title": "Registration sent!",
-      "description": "We've received your request for <strong>{course}</strong>. We'll get back to you within 24 hours.",
+      "title": "Thank you, {name}!",
+      "titleFallback": "Thank you!",
+      "description": "See you on court!",
       "backHome": "Back to start"
     },
     "info": {
       "title": "Registration form",
       "helloBadge": "EN",
       "hello": "Hello!",
-      "intro": "I'm Darío, director of the Panda Tenis Association.",
-      "alsoPlatform": "We'll also sign you up on our digital platform, where you'll be able to track achievements and progress in a fun and motivating way.",
+      "thanks": "Welcome! Complete the details below and become part of the Panda Tenis family.",
       "changeCourse": "Change course",
       "pickCourse": "Pick the course or camp you'd like to sign up for:",
       "seeYouOnCourt": "See you on court!"
@@ -547,14 +555,35 @@
         "phone": "Phone",
         "phonePlaceholder": "600 000 000",
         "email": "Email",
-        "emailPlaceholder": "email@example.com (optional)",
+        "emailPlaceholder": "email@example.com",
         "add": "Add family member",
-        "remove": "Remove"
+        "remove": "Remove",
+        "errorIncomplete": "Fill in the family member's name, relationship and phone.",
+        "errorEmail": "Enter a valid email for the family member."
       }
     },
     "additional": {
       "title": "Additional info",
       "hint": "Leave blank if not applicable",
+      "referral": {
+        "label": "How did you hear about us?",
+        "placeholder": "Select an option",
+        "options": {
+          "carteles": "Posters",
+          "flyers": "Flyers",
+          "chapas": "Promotional badges",
+          "google_web": "Google / Website",
+          "instagram": "Instagram",
+          "facebook": "Facebook",
+          "recomendacion": "Referral from a student",
+          "otro": "Other"
+        }
+      },
+      "commLocale": {
+        "label": "Which language would you like to receive communications in?",
+        "es": "Español",
+        "en": "English"
+      },
       "allergies": "Allergies",
       "illnesses": "Illnesses",
       "injuries": "Injuries",
@@ -692,8 +721,6 @@
     },
     "sidebar": {
       "favorites": "Favorites",
-      "enableNotifTitle": "Enable alerts",
-      "enableNotifText": "Get browser notifications for WhatsApp.",
       "openMenu": "Open menu",
       "closeMenu": "Close menu",
       "signOut": "Sign out",
@@ -704,7 +731,6 @@
         "community": "Community",
         "school": "School",
         "camps": "Camps",
-        "marketing": "Marketing",
         "finance": "Finance",
         "control": "Club control"
       },
@@ -721,10 +747,10 @@
         "reports": "Reports",
         "gallery": "Gallery",
         "campusBoard": "Camps",
+        "qr": "QR codes",
+        "sms": "SMS",
+        "promotions": "Promotions",
         "registrations": "Registrations",
-        "chats": "Conversations",
-        "sends": "Broadcasts",
-        "connection": "Connection",
         "payments": "Payments & receipts",
         "settings": "Settings"
       }
@@ -733,7 +759,6 @@
       "panel": "Panel",
       "students": "Students",
       "payments": "Payments",
-      "whatsapp": "WhatsApp",
       "attendance": "Attendance",
       "registrations": "Forms"
     },
@@ -749,10 +774,7 @@
       "payments": "Payments",
       "registrations": "Registrations",
       "leads": "Leads",
-      "whatsapp": "WhatsApp",
-      "chat": "Chat",
-      "chats": "Conversations",
-      "connection": "Connection",
+      "sms": "SMS",
       "groups": "Groups",
       "calendar": "Calendar",
       "campus": "Campus",
@@ -774,7 +796,7 @@
       },
       "leads": {
         "title": "Interested leads",
-        "description": "Families who asked for info from the site or directly. Call them or start WhatsApp with an approved template."
+        "description": "Families who asked for info from the site or directly. Call them to move their request forward."
       },
       "groups": {
         "title": "Group management",
@@ -807,18 +829,6 @@
       "registrations": {
         "title": "Registrations",
         "description": "Registrations received for the school and camps."
-      },
-      "whatsappChats": {
-        "title": "WhatsApp conversations",
-        "description": "Chat one-on-one with each family from the panel. Incoming messages appear in real time."
-      },
-      "whatsappConnection": {
-        "title": "WhatsApp connection",
-        "description": "Status of the number connected to WhatsApp Business Cloud API and inbound webhook configuration."
-      },
-      "whatsapp": {
-        "title": "WhatsApp",
-        "description": "Inbox, templates and bulk sends with Meta Cloud API. Import families from CSV or TSV without fighting the format."
       },
       "payments": {
         "title": "Payments & receipts",
@@ -870,14 +880,12 @@
         "quickActions": "Quick actions",
         "act": {
           "createStudent": "Create new student",
-          "sendBroadcast": "Send broadcast",
           "reviewRegistrations": "Review registrations",
           "awardMedal": "Award a medal",
           "paymentReminder": "Payment reminder",
           "uploadPhotos": "Upload photos to gallery",
           "scheduleCamp": "Schedule camp or intensive",
-          "takeAttendance": "Take attendance",
-          "openWhatsapp": "Open WhatsApp"
+          "takeAttendance": "Take attendance"
         },
         "dueOverdue": "Overdue",
         "duePending": "Pending",
@@ -899,9 +907,7 @@
       "quick": {
         "newStudent": "New student",
         "recordPayment": "Record payment",
-        "takeAttendance": "Take attendance",
-        "sendBroadcast": "Send broadcast",
-        "openWhatsapp": "Open WhatsApp"
+        "takeAttendance": "Take attendance"
       }
     },
     "error": {

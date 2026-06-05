@@ -2,8 +2,9 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useId, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 
 /**
  * Panel lateral deslizante (desde la derecha). Alternativa al Modal para flujos
@@ -28,6 +29,9 @@ export function Drawer({
   widthClass?: string;
 }) {
   const reduced = useReducedMotion();
+  const dialogRef = useFocusTrap<HTMLElement>(open);
+  const titleId = useId();
+  const descId = useId();
 
   useEffect(() => {
     if (!open) return;
@@ -59,8 +63,11 @@ export function Drawer({
             exit={reduced ? { opacity: 0 } : { x: "100%" }}
             transition={{ type: "spring", stiffness: 340, damping: 34 }}
             onClick={(e) => e.stopPropagation()}
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
+            aria-labelledby={title ? titleId : undefined}
+            aria-describedby={description ? descId : undefined}
             className={cn(
               "flex h-full w-full max-w-[92vw] flex-col bg-[var(--surface)] shadow-[var(--shadow-lg)]",
               widthClass,
@@ -71,10 +78,10 @@ export function Drawer({
               <header className="flex flex-shrink-0 items-start gap-3 border-b border-[var(--border)] px-4 py-3.5 sm:px-5">
                 <div className="min-w-0 flex-1">
                   {title && (
-                    <h2 className="text-[16px] font-bold leading-tight text-foreground">{title}</h2>
+                    <h2 id={titleId} className="text-[16px] font-bold leading-tight text-foreground">{title}</h2>
                   )}
                   {description && (
-                    <p className="mt-0.5 text-[12.5px] leading-snug text-[var(--muted)]">{description}</p>
+                    <p id={descId} className="mt-0.5 text-[12.5px] leading-snug text-[var(--muted)]">{description}</p>
                   )}
                 </div>
                 <button

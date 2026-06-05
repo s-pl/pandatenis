@@ -1,8 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { Stagger, StaggerItem } from "@/components/ui/motion";
 
 export function PageShell({
   title,
@@ -32,11 +32,8 @@ export function PageShell({
 }) {
   const hasMedia = Boolean(media);
   return (
-    <div className={cn("flex flex-col gap-4", className)}>
-      <motion.header
-        initial={false}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+    <Stagger className={cn("flex flex-col gap-4", className)} stagger={0.08}>
+      <StaggerItem
         className={cn(
           "flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between",
           variant === "tinted" &&
@@ -68,16 +65,9 @@ export function PageShell({
             {actions}
           </div>
         )}
-      </motion.header>
+      </StaggerItem>
 
-      <motion.div
-        initial={false}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.05 }}
-        className="flex flex-col gap-4"
-      >
-        {children}
-      </motion.div>
-    </div>
+      <StaggerItem className="flex flex-col gap-4">{children}</StaggerItem>
+    </Stagger>
   );
 }

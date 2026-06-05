@@ -6,7 +6,6 @@ import {
   CreditCard,
   Download,
   FileText,
-  MessageCircle,
   PieChart,
   Plus,
   Receipt,
@@ -30,10 +29,11 @@ import {
   createPaymentAction,
   deletePaymentAction,
   markPaymentPaid,
-  sendPaymentReminderAction,
   type PaymentInput,
 } from "@/lib/admin/actions/payments";
-import { formatMoney, formatShortDate, relativeTime } from "@/lib/format";
+import { formatMoney, formatShortDate } from "@/lib/format";
+import { VAT_OPTIONS, vatChoiceFor, vatChoiceToFields, type VatChoice } from "@/lib/invoice";
+import { Link } from "@/i18n/navigation";
 
 type Payment = {
   id: string;
@@ -48,9 +48,6 @@ type Payment = {
   status: "pagado" | "pendiente" | "atrasado";
   method: "efectivo" | "transferencia" | "bizum" | null;
   receiptNumber: string | null;
-  lastReminderAt: string | null;
-  lastReminderStatus: string | null;
-  lastReminderError: string | null;
 };
 
 type Student = {
@@ -117,11 +114,13 @@ export function PaymentsManager({
       markPaidOptimistic({ id: payment.id, method });
       const result = await markPaymentPaid(payment.id, method);
       if (result.ok) {
-        toast.success("Recibo cobrado", {
-          description: result.data?.whatsappQueued
-            ? "Recibo numerado y WhatsApp encolado para la familia."
-            : "Recibo numerado.",
-        });
+        if (result.data?.smsWarning) {
+          toast.warning("Recibo cobrado · SMS no enviado", {
+            description: result.data.smsWarning,
+          });
+        } else {
+          toast.success("Recibo cobrado", { description: "Recibo numerado · SMS enviado." });
+        }
       } else {
         toast.error("No se ha podido cobrar", { description: result.error });
       }
@@ -200,17 +199,6 @@ export function PaymentsManager({
     URL.revokeObjectURL(url);
   }
 
-  function sendReminder(payment: Payment) {
-    startTransition(async () => {
-      const result = await sendPaymentReminderAction({ paymentId: payment.id });
-      if (result.ok) {
-        toast.success(result.data?.status === "queued" ? "Recordatorio en cola" : "Recordatorio enviado");
-      } else {
-        toast.error("No se ha podido enviar el recordatorio", { description: result.error });
-      }
-    });
-  }
-
   // ─── Table columns (used in Facturas & Deudas tabs) ───
   const columns: Column<Payment>[] = [
     {
@@ -271,9 +259,6 @@ export function PaymentsManager({
           ) : (
             <span className="text-[var(--muted)]">Sin recibo</span>
           )}
-          {p.lastReminderAt && (
-            <p className="mt-1 text-[var(--muted)]">Aviso {relativeTime(p.lastReminderAt)}</p>
-          )}
         </div>
       ),
     },
@@ -297,19 +282,16 @@ export function PaymentsManager({
               Cobrar
             </Button>
           )}
-          {p.guardianPhone && p.status !== "pagado" && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                sendReminder(p);
-              }}
-              className="grid h-7 w-7 place-items-center rounded-full bg-[var(--whatsapp)] text-white hover:opacity-90"
-              title="Recordar por WhatsApp API"
-            >
-              <MessageCircle className="h-3.5 w-3.5" />
-            </button>
-          )}
+          <Link
+            href={`/factura/${p.id}`}
+            target="_blank"
+            onClick={(e) => e.stopPropagation()}
+            className="grid h-7 w-7 place-items-center rounded-md text-[var(--muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-[var(--foreground)]"
+            aria-label="Ver factura"
+            title={p.receiptNumber ? "Ver factura" : "Vista previa (proforma)"}
+          >
+            <FileText className="h-3.5 w-3.5" />
+          </Link>
           <button
             type="button"
             onClick={(e) => {
@@ -474,22 +456,8 @@ export function PaymentsManager({
                         {p.receiptNumber}
                       </span>
                     )}
-                    {p.lastReminderAt && <Badge tone="info">Aviso {relativeTime(p.lastReminderAt)}</Badge>}
                   </div>
                   <div className="flex items-center gap-1.5">
-                    {p.guardianPhone && p.status !== "pagado" && (
-                      <Button
-                        size="sm"
-                        variant="secondary"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          sendReminder(p);
-                        }}
-                        iconLeft={<MessageCircle className="h-3.5 w-3.5" />}
-                      >
-                        Avisar
-                      </Button>
-                    )}
                     {p.status !== "pagado" && (
                       <Button
                         size="sm"
@@ -503,6 +471,15 @@ export function PaymentsManager({
                         Cobrar
                       </Button>
                     )}
+                    <Link
+                      href={`/factura/${p.id}`}
+                      target="_blank"
+                      onClick={(e) => e.stopPropagation()}
+                      className="grid h-9 w-9 place-items-center rounded-md text-[var(--muted)] active:bg-[var(--surface-muted)]"
+                      aria-label="Ver factura"
+                    >
+                      <FileText className="h-4 w-4" />
+                    </Link>
                     <button
                       type="button"
                       onClick={(e) => {
@@ -620,6 +597,8 @@ function PaymentForm({
     status: "pendiente",
     method: null,
     campusCourseId: campusCourseId ?? null,
+    vatExempt: true,
+    vatRate: 0,
   });
   const [pending, startTransition] = useTransition();
 
@@ -672,6 +651,24 @@ function PaymentForm({
           />
         </Field>
       </div>
+      <Field
+        label="IVA"
+        hint="El importe ya incluye el IVA. Por defecto, exento (Art. 20 LIVA) para una entidad sin ánimo de lucro."
+      >
+        <Select
+          value={vatChoiceFor(values.vatExempt ?? true, values.vatRate ?? 0)}
+          onChange={(e) => {
+            const fields = vatChoiceToFields(e.target.value as VatChoice);
+            setValues((prev) => ({ ...prev, vatExempt: fields.vatExempt, vatRate: fields.vatRate }));
+          }}
+        >
+          {VAT_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      </Field>
       <Field label="Estado inicial">
         <Select value={values.status} onChange={(e) => set("status", e.target.value as PaymentInput["status"])}>
           <option value="pendiente">Pendiente</option>

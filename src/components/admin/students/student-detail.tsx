@@ -11,7 +11,6 @@ import {
   ImageIcon,
   LayoutDashboard,
   Medal as MedalIcon,
-  MessageCircle,
   Phone,
   Trophy,
   User,
@@ -28,7 +27,7 @@ import { Tabs, type TabItem } from "@/components/ui/tabs";
 import { awardMedalAction, removeMedalAction } from "@/lib/admin/actions/medals";
 import { saveProgressEvaluation } from "@/lib/admin/actions/progress";
 import { createTermReportAction } from "@/lib/admin/actions/reports";
-import { formatLongDate, formatMoney, formatPhoneEs, normalizeWhatsappNumber, relativeTime } from "@/lib/format";
+import { formatLongDate, formatMoney, formatPhoneEs, relativeTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 type Student = {
@@ -79,21 +78,6 @@ type MediaAsset = {
   uploadedAt: string;
   consentChecked: boolean;
 };
-type WhatsappThread = {
-  phone: string | null;
-  tags: string[];
-  internalNote: string | null;
-  marketingOptOut: boolean;
-  lastMessageAt: string | null;
-  messages: Array<{
-    id: string;
-    direction: "inbound" | "outbound";
-    status: string;
-    body: string;
-    createdAt: string;
-  }>;
-};
-
 type Tab = "resumen" | "datos" | "progreso" | "historial" | "medallas" | "pagos";
 
 const TABS: Array<{ id: Tab; label: string; icon: ReactNode }> = [
@@ -136,7 +120,6 @@ export function StudentDetail({
   attendanceStats,
   reports,
   media,
-  whatsapp,
 }: {
   student: Student;
   guardian: Guardian;
@@ -149,7 +132,6 @@ export function StudentDetail({
   attendanceStats: { rate: number | null; absences: number };
   reports: Report[];
   media: MediaAsset[];
-  whatsapp: WhatsappThread;
 }) {
   const [tab, setTab] = useState<Tab>("resumen");
 
@@ -160,7 +142,6 @@ export function StudentDetail({
   const nextPayment = [...pendingPayments].sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0] ?? null;
   const latestReport = reports[0] ?? null;
   const latestMedia = media[0] ?? null;
-  const latestWhatsapp = whatsapp.messages[0] ?? null;
 
   return (
     <div className="flex flex-col gap-4">
@@ -263,64 +244,6 @@ export function StudentDetail({
                 </div>
               </CardBody>
             </Card>
-
-            <Card>
-              <CardHeader
-                title="WhatsApp familiar"
-                description={whatsapp.phone ? formatPhoneEs(whatsapp.phone) : "Sin teléfono válido"}
-                actions={
-                  whatsapp.phone ? (
-                    <Link href={`/admin/whatsapp/chats/${whatsapp.phone}`}>
-                      <span className="rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1.5 text-xs font-medium hover:bg-[var(--surface-muted)]">
-                        Abrir chat
-                      </span>
-                    </Link>
-                  ) : null
-                }
-              />
-              <CardBody className="grid gap-4">
-                <div className="flex flex-wrap gap-2">
-                  <Badge tone={whatsapp.marketingOptOut ? "danger" : "success"}>
-                    {whatsapp.marketingOptOut ? "Marketing bloqueado" : "Marketing permitido"}
-                  </Badge>
-                  {whatsapp.lastMessageAt && <Badge tone="info">Último mensaje {relativeTime(whatsapp.lastMessageAt)}</Badge>}
-                  {whatsapp.tags.map((tag) => (
-                    <Badge key={tag} tone="neutral">
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-                {whatsapp.internalNote && (
-                  <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-muted)] px-3 py-2 text-sm text-[var(--muted)]">
-                    {whatsapp.internalNote}
-                  </div>
-                )}
-                {latestWhatsapp ? (
-                  <ul className="divide-y divide-[var(--border)]">
-                    {whatsapp.messages.map((message) => (
-                      <li key={message.id} className="py-3">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
-                            {message.direction === "inbound" ? "Entrante" : "Saliente"}
-                          </span>
-                          <Badge tone={message.status === "failed" ? "danger" : message.status === "read" ? "success" : "info"}>
-                            {message.status}
-                          </Badge>
-                        </div>
-                        <p className="mt-1 line-clamp-2 text-sm">{message.body || "Mensaje sin texto"}</p>
-                        <p className="mt-1 text-xs text-[var(--muted)]">{relativeTime(message.createdAt)}</p>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <EmptyState
-                    icon={<MessageCircle className="h-5 w-5" />}
-                    title="Sin conversación registrada"
-                    description="Cuando haya envíos o respuestas por Cloud API aparecerán aquí."
-                  />
-                )}
-              </CardBody>
-            </Card>
           </motion.div>
         )}
 
@@ -377,17 +300,6 @@ export function StudentDetail({
                         {guardian.email}
                       </a>
                     )}
-                    {(() => {
-                      const normalizedPhone = normalizeWhatsappNumber(guardian.phone);
-                      return normalizedPhone ? (
-                        <Link
-                          href={`/admin/whatsapp/chats/${normalizedPhone}`}
-                          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[var(--primary)] px-4 py-3 text-sm font-semibold text-white hover:bg-[#185536]"
-                        >
-                          <MessageCircle className="h-4 w-4" /> Abrir chat en el panel
-                        </Link>
-                      ) : null;
-                    })()}
                   </div>
                 ) : (
                   <EmptyState

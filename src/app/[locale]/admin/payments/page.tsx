@@ -17,7 +17,7 @@ export default async function PaymentsPage() {
   const { supabase } = await requireAdmin();
   const tPage = await getTranslations("admin.pages.payments");
 
-  const [paymentsRes, studentsRes, receiptsRes, remindersRes] = await Promise.all([
+  const [paymentsRes, studentsRes, receiptsRes] = await Promise.all([
     supabase
       .from("payments")
       .select("id, student_id, concept, amount, due_date, paid_at, status, method")
@@ -32,12 +32,6 @@ export default async function PaymentsPage() {
       .from("receipts")
       .select("id, payment_id, receipt_number, generated_at")
       .order("generated_at", { ascending: false }),
-    supabase
-      .from("whatsapp_messages")
-      .select("id, related_id, status, created_at, sent_at, error_message")
-      .eq("related_type", "recibo")
-      .order("created_at", { ascending: false })
-      .limit(500),
   ]);
 
   const students = (studentsRes.data ?? []).map((row) => {
@@ -55,20 +49,10 @@ export default async function PaymentsPage() {
   const receiptByPayment = new Map(
     (receiptsRes.data ?? []).map((row) => [row.payment_id, { id: row.id, receiptNumber: row.receipt_number, generatedAt: row.generated_at }]),
   );
-  const remindersByPayment = new Map<string, { status: string; at: string; error: string | null }>();
-  for (const row of remindersRes.data ?? []) {
-    if (!row.related_id || remindersByPayment.has(row.related_id)) continue;
-    remindersByPayment.set(row.related_id, {
-      status: row.status,
-      at: row.sent_at ?? row.created_at,
-      error: row.error_message ?? null,
-    });
-  }
 
   const payments = (paymentsRes.data ?? []).map((row) => {
     const student = studentById.get(row.student_id);
     const receipt = receiptByPayment.get(row.id);
-    const reminder = remindersByPayment.get(row.id);
     return {
       id: row.id,
       studentId: row.student_id,
@@ -82,9 +66,6 @@ export default async function PaymentsPage() {
       status: row.status as "pagado" | "pendiente" | "atrasado",
       method: row.method as "efectivo" | "transferencia" | "bizum" | null,
       receiptNumber: receipt?.receiptNumber ?? null,
-      lastReminderAt: reminder?.at ?? null,
-      lastReminderStatus: reminder?.status ?? null,
-      lastReminderError: reminder?.error ?? null,
     };
   });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { useRef, useState, type ReactNode } from "react";
+import { cloneElement, isValidElement, useId, useRef, useState, type ReactElement, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,6 +21,15 @@ export function Tooltip({
 }) {
   const [open, setOpen] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const tooltipId = useId();
+
+  // Asocia el tooltip al hijo enfocable para lectores de pantalla.
+  const describedChild =
+    open && isValidElement(children)
+      ? cloneElement(children as ReactElement<Record<string, unknown>>, {
+          "aria-describedby": tooltipId,
+        })
+      : children;
 
   function show() {
     if (timer.current) clearTimeout(timer.current);
@@ -39,11 +48,12 @@ export function Tooltip({
       onFocusCapture={show}
       onBlurCapture={hide}
     >
-      {children}
+      {describedChild}
       <AnimatePresence>
         {open && content && (
           <motion.span
             role="tooltip"
+            id={tooltipId}
             initial={{ opacity: 0, y: side === "top" ? 4 : -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: side === "top" ? 4 : -4 }}

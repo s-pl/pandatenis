@@ -19,7 +19,7 @@ export default async function StudentsPage() {
   const [studentsRes, guardiansRes, groupsRes, profilesRes] = await Promise.all([
     supabase
       .from("students")
-      .select("id, first_name, last_name, birth_date, address, level, dominant_hand, group_id, professor_id, medical_info, image_consent, coach_notes, active")
+      .select("id, first_name, last_name, birth_date, address, level, dominant_hand, group_id, professor_id, medical_info, image_consent, coach_notes, comm_locale, active")
       .order("first_name")
       .limit(2000),
     supabase
@@ -42,6 +42,7 @@ export default async function StudentsPage() {
     medicalInfo: row.medical_info ?? "",
     imageConsent: row.image_consent,
     coachNotes: row.coach_notes ?? "",
+    commLocale: (row.comm_locale === "en" ? "en" : "es") as "es" | "en",
     active: row.active,
   }));
 

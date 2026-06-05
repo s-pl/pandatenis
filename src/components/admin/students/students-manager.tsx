@@ -12,7 +12,6 @@ import {
   Eye,
   GraduationCap,
   List,
-  MessageCircle,
   MoreVertical,
   Pencil,
   Phone,
@@ -35,7 +34,6 @@ import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Tabs, type TabItem } from "@/components/ui/tabs";
 import { StudentForm } from "@/components/admin/students/student-form";
-import { QuickTemplateButton } from "@/components/admin/whatsapp/quick-template-button";
 import { LevelDonutChart } from "@/components/charts/level-donut-chart";
 import {
   deleteStudentAction,
@@ -59,6 +57,7 @@ type Student = {
   medicalInfo: string;
   imageConsent: boolean;
   coachNotes: string;
+  commLocale: "es" | "en";
   active: boolean;
 };
 
@@ -393,13 +392,6 @@ export function StudentsManager({
             >
               <Phone className="h-3.5 w-3.5" />
             </a>
-            <span onClick={(e) => e.stopPropagation()}>
-              <QuickTemplateButton
-                phone={normalizeWhatsappNumber(g.phone)}
-                recipientName={g.fullName}
-                defaultVariables={{ "1": g.fullName }}
-              />
-            </span>
           </div>
         );
       },
@@ -563,14 +555,6 @@ export function StudentsManager({
                         >
                           <Phone className="h-3.5 w-3.5" />
                         </a>
-                        <span onClick={(e) => e.stopPropagation()}>
-                          <QuickTemplateButton
-                            phone={normalizeWhatsappNumber(guardian.phone)}
-                            recipientName={guardian.fullName}
-                            defaultVariables={{ "1": guardian.fullName }}
-                            size="md"
-                          />
-                        </span>
                       </div>
                     )}
                   </div>
@@ -702,6 +686,7 @@ function toFormValues(student: Student, guardian?: Guardian): StudentInput {
     guardianPhone: guardian?.phone ?? "",
     guardianEmail: guardian?.email ?? "",
     relationship: guardian?.relationship ?? "Madre",
+    commLocale: student.commLocale ?? "es",
   };
 }
 
@@ -749,8 +734,8 @@ function StudentStatsPanel({
           tone="primary"
         />
         <StatCard
-          icon={<MessageCircle className="h-4 w-4" />}
-          label="WhatsApp listo"
+          icon={<Phone className="h-4 w-4" />}
+          label="Teléfono válido"
           value={activeCount > 0 ? `${whatsappReady}/${activeCount}` : "0"}
           detail={activeCount > 0 ? `${readyPercent}% con teléfono válido` : "Sin alumnos activos"}
           tone={readyPercent === 100 ? "success" : "warning"}
@@ -826,7 +811,7 @@ function StudentStatsPanel({
               detail={activeCount > 0 ? `${guardianCount}/${activeCount}` : "Sin activos"}
             />
             <HealthMetric
-              label="Teléfono WhatsApp válido"
+              label="Teléfono móvil válido"
               value={readyPercent}
               detail={activeCount > 0 ? `${whatsappReady}/${activeCount}` : "Sin activos"}
             />

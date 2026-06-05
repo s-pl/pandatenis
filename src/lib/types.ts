@@ -8,8 +8,6 @@ export type PaymentStatus = "pagado" | "pendiente" | "atrasado";
 
 export type PaymentMethod = "efectivo" | "transferencia" | "bizum";
 
-export type MessageStatus = "queued" | "sent" | "failed" | "delivered" | "read";
-
 export type EventType = "campamento" | "torneo" | "clase_especial" | "reunion" | "otro";
 
 export type LeadInterest = "escuela" | "campus" | "ambos";
@@ -29,9 +27,7 @@ export type ActionCenterItem = {
     | "payment_overdue"
     | "lead_followup"
     | "registration_pending"
-    | "class_attendance"
-    | "template_review"
-    | "whatsapp_queue";
+    | "class_attendance";
   title: string;
   detail: string;
   priority: ActionCenterPriority;
@@ -150,7 +146,6 @@ export interface Receipt {
   paymentId: string;
   receiptNumber: string;
   generatedAt: string;
-  whatsappMessageId?: string;
 }
 
 export interface PrivateLesson {
@@ -227,28 +222,6 @@ export interface Registration {
   studentId?: string;
 }
 
-export interface WhatsappMessage {
-  id: string;
-  recipientName: string;
-  recipientPhone: string;
-  templateName: string;
-  status: MessageStatus;
-  createdAt: string;
-  sentAt?: string;
-  relatedType: "recibo" | "promocion" | "galeria" | "evento" | "inscripcion";
-}
-
-export interface MessageTemplate {
-  id: string;
-  name: string;
-  category: "recibo" | "promocion" | "evento" | "inscripcion" | "galeria";
-  body: string;
-  metaTemplateName: string;
-  language: string;
-  metaStatus: "pending" | "approved" | "rejected";
-  componentsSchema: { body?: { variables?: string[] } } | null;
-}
-
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -267,6 +240,10 @@ export interface SchoolSettings {
   receiptPrefix: string;
   fiscalName: string;
   fiscalAddress: string;
+  fiscalNif: string;
+  fiscalEmail: string;
+  fiscalPhone: string;
+  invoiceFooter: string;
 }
 
 export interface SchoolData {
@@ -287,8 +264,6 @@ export interface SchoolData {
   leads: Lead[];
   leadSources: LeadSource[];
   registrations: Registration[];
-  whatsappMessages: WhatsappMessage[];
-  messageTemplates: MessageTemplate[];
   calendarEvents: CalendarEvent[];
   settings: SchoolSettings;
 }

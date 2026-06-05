@@ -5,7 +5,6 @@ import {
   FileSpreadsheet,
   KanbanSquare,
   List,
-  MessageCircle,
   Pencil,
   Phone,
   Plus,
@@ -25,10 +24,6 @@ import { Field, Input, Select, Textarea } from "@/components/ui/input";
 import { Modal } from "@/components/ui/modal";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
-  TemplateComposer,
-  type ApprovedTemplate,
-} from "@/components/admin/whatsapp/template-composer";
-import {
   createLeadAction,
   deleteLeadAction,
   importConsentedLeadsAction,
@@ -36,7 +31,7 @@ import {
   updateLeadStatusAction,
   type LeadInput,
 } from "@/lib/admin/actions/leads";
-import { formatPhoneEs, normalizeWhatsappNumber, relativeTime } from "@/lib/format";
+import { formatPhoneEs, relativeTime } from "@/lib/format";
 import type { LeadPipelineStage } from "@/lib/types";
 
 type Lead = {
@@ -91,13 +86,11 @@ export function LeadsManager({
   leads,
   sources,
   profiles,
-  approvedTemplates,
   referenceNow,
 }: {
   leads: Lead[];
   sources: Array<{ id: string; name: string }>;
   profiles: Array<{ id: string; fullName: string }>;
-  approvedTemplates: ApprovedTemplate[];
   referenceNow: string;
 }) {
   const [query, setQuery] = useState("");
@@ -107,18 +100,16 @@ export function LeadsManager({
   const [view, setView] = useState<"list" | "kanban">("list");
   const [creating, setCreating] = useState(false);
   const [importing, setImporting] = useState(false);
-  const [whatsappLead, setWhatsappLead] = useState<Lead | null>(null);
   const [deleting, setDeleting] = useState<Lead | null>(null);
   const [pending, startTransition] = useTransition();
-  const whatsappDefaultVariables = useMemo(
-    () => (whatsappLead ? leadTemplateDefaults(whatsappLead) : undefined),
-    [whatsappLead],
-  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     const now = Date.parse(referenceNow);
     return leads.filter((lead) => {
+      // Los leads convertidos pasan a ser Alumnos: se ocultan de la lista salvo
+      // que se filtre explícitamente por el estado "convertido".
+      if (status !== "convertido" && lead.status === "convertido") return false;
       if (status !== "all" && lead.status !== status) return false;
       if (sourceFilter !== "all" && lead.sourceId !== sourceFilter) return false;
       if (focusFilter === "due" && (!lead.nextActionAt || new Date(lead.nextActionAt).getTime() > now)) return false;
@@ -170,28 +161,6 @@ export function LeadsManager({
       if (result.ok) toast.success("Contacto eliminado");
       else toast.error("No se ha podido eliminar", { description: result.error });
     });
-  }
-
-  function openWhatsappApi(lead: Lead) {
-    if (!normalizeWhatsappNumber(lead.phone)) {
-      toast.error("Teléfono no válido para WhatsApp", {
-        description: "Revisa el número antes de enviar por Cloud API.",
-      });
-      return;
-    }
-    setWhatsappLead(lead);
-  }
-
-  async function handleWhatsappSent(lead: Lead) {
-    if (lead.status === "nuevo") {
-      const result = await updateLeadStatusAction(lead.id, "contactado");
-      if (!result.ok) {
-        toast.warning("Mensaje enviado, pero no se pudo marcar como contactado", {
-          description: result.error,
-        });
-      }
-    }
-    setWhatsappLead(null);
   }
 
   function exportCsv() {
@@ -331,17 +300,6 @@ export function LeadsManager({
           >
             <Phone className="h-3.5 w-3.5" />
           </a>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              openWhatsappApi(l);
-            }}
-            className="grid h-7 w-7 place-items-center rounded-full text-[var(--whatsapp)] transition-colors hover:bg-[var(--primary-soft)]"
-            title="WhatsApp API"
-          >
-            <MessageCircle className="h-3.5 w-3.5" />
-          </button>
           <button
             type="button"
             onClick={(e) => {
@@ -487,9 +445,6 @@ export function LeadsManager({
                         {lead.whatsappConsent && <Badge tone="success" className="px-2 py-0.5 text-[10px]">Opt-in</Badge>}
                       </div>
                       <div className="mt-3 flex items-center gap-1">
-                        <Button size="sm" variant="secondary" onClick={() => openWhatsappApi(lead)} iconLeft={<MessageCircle className="h-3.5 w-3.5" />}>
-                          WhatsApp
-                        </Button>
                         <Select
                           value={lead.status}
                           onChange={(e) => setStatusFor(lead, e.target.value as Lead["status"])}
@@ -545,17 +500,6 @@ export function LeadsManager({
                 >
                   <Phone className="h-3.5 w-3.5" />
                 </a>
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    openWhatsappApi(l);
-                  }}
-                  className="grid h-9 w-9 place-items-center rounded-md bg-[var(--whatsapp)] text-white active:opacity-80"
-                  aria-label="WhatsApp API"
-                >
-                  <MessageCircle className="h-3.5 w-3.5" />
-                </button>
                 <div className="flex-1" />
                 <Select
                   value={l.status}
@@ -646,61 +590,8 @@ export function LeadsManager({
       >
         <ConsentImporter onDone={() => setImporting(false)} />
       </Modal>
-
-      <Modal
-        open={Boolean(whatsappLead)}
-        onClose={() => setWhatsappLead(null)}
-        title="Hablar por WhatsApp API"
-        description="Inicia la conversación desde el número conectado a Meta Cloud API usando una plantilla aprobada."
-        size="xl"
-      >
-        {whatsappLead && (
-          <div className="grid gap-4">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface-muted)] p-4">
-              <p className="text-sm font-semibold">{whatsappLead.fullName}</p>
-              <p className="mt-1 text-xs text-[var(--muted)]">
-                {formatPhoneEs(whatsappLead.phone)} · {interestLabel[whatsappLead.interest]} ·{" "}
-                {whatsappLead.childAge} años
-              </p>
-            </div>
-            <TemplateComposer
-              phone={normalizeWhatsappNumber(whatsappLead.phone)}
-              recipientName={whatsappLead.fullName}
-              templates={suggestTemplates(approvedTemplates, whatsappLead)}
-              defaultVariables={whatsappDefaultVariables}
-              onSent={() => handleWhatsappSent(whatsappLead)}
-            />
-          </div>
-        )}
-      </Modal>
     </>
   );
-}
-
-function leadTemplateDefaults(lead: Lead): Record<string, string> {
-  const firstName = lead.fullName.split(" ").filter(Boolean)[0] ?? lead.fullName;
-  const interest = interestLabel[lead.interest];
-  return {
-    "1": firstName,
-    "2": interest,
-    "3": String(lead.childAge),
-    nombre: lead.fullName,
-    first_name: firstName,
-    interes: interest,
-    edad: String(lead.childAge),
-    origen: lead.sourceName,
-  };
-}
-
-function suggestTemplates(templates: ApprovedTemplate[], lead: Lead): ApprovedTemplate[] {
-  const needle = lead.sourceName.toLowerCase().includes("web") || lead.status === "nuevo"
-    ? "bienvenida"
-    : "seguimiento";
-  return [...templates].sort((a, b) => {
-    const aScore = a.name.toLowerCase().includes(needle) ? -1 : 0;
-    const bScore = b.name.toLowerCase().includes(needle) ? -1 : 0;
-    return aScore - bScore || a.name.localeCompare(b.name);
-  });
 }
 
 function ConsentImporter({ onDone }: { onDone: () => void }) {

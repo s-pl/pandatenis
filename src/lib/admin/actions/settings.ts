@@ -11,6 +11,16 @@ const SettingsSchema = z.object({
   receiptPrefix: z.string().trim().min(1).max(6),
   fiscalName: z.string().trim().optional().default(""),
   fiscalAddress: z.string().trim().optional().default(""),
+  fiscalNif: z.string().trim().optional().default(""),
+  fiscalEmail: z.union([z.literal(""), z.string().trim().email()]).optional().default(""),
+  fiscalPhone: z.string().trim().optional().default(""),
+  invoiceFooter: z.string().trim().optional().default(""),
+  whatsappBookingNumber: z.string().trim().optional().default(""),
+  whatsappBookingMsgEs: z.string().trim().max(400).optional().default(""),
+  whatsappBookingMsgEn: z.string().trim().max(400).optional().default(""),
+  smsWelcomeEnabled: z.boolean().optional().default(false),
+  smsWelcomeMsgEs: z.string().trim().max(600).optional().default(""),
+  smsWelcomeMsgEn: z.string().trim().max(600).optional().default(""),
 });
 
 const PasswordSchema = z
@@ -48,6 +58,16 @@ export async function updateSettingsAction(input: SettingsInput): Promise<Action
         receipt_prefix: data.receiptPrefix,
         fiscal_name: data.fiscalName,
         fiscal_address: data.fiscalAddress,
+        fiscal_nif: data.fiscalNif,
+        fiscal_email: data.fiscalEmail,
+        fiscal_phone: data.fiscalPhone,
+        invoice_footer: data.invoiceFooter,
+        whatsapp_booking_number: data.whatsappBookingNumber,
+        whatsapp_booking_msg_es: data.whatsappBookingMsgEs,
+        whatsapp_booking_msg_en: data.whatsappBookingMsgEn,
+        sms_welcome_enabled: data.smsWelcomeEnabled,
+        sms_welcome_msg_es: data.smsWelcomeMsgEs,
+        sms_welcome_msg_en: data.smsWelcomeMsgEn,
       })
       .eq("id", true);
     if (error) throw error;

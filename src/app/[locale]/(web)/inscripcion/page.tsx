@@ -51,35 +51,34 @@ export default async function InscripcionPage({
         <div className="wrap max-w-[920px]">
           <div className="rounded-3xl border border-[var(--rule)] bg-[var(--cream-soft)] p-8 shadow-[var(--shadow-md)] sm:p-12">
             <p className="text-[12px] font-extrabold uppercase tracking-wider text-[var(--coral-deep)]">
-              Inscripción por WhatsApp
+              {t("whatsappBadge")}
             </p>
             <h2 className="mt-3 headline text-[clamp(1.9rem,5vw,3.2rem)] text-[var(--forest)]">
-              Primero hablamos y después te paso tu ficha privada.
+              {t("heading")}
             </h2>
             <p className="mt-5 max-w-2xl text-[15.5px] leading-[1.8] text-[var(--forest-soft)]">
-              Para clases normales o campus, escríbeme por WhatsApp. Cuando confirmemos plaza, horario o convocatoria,
-              crearé una ficha básica desde el panel y te enviaré un enlace para completar todos los datos del alumno.
+              {t("body")}
             </p>
 
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
               <a
-                href="https://wa.me/34633739312?text=Hola%2C%20quiero%20informaci%C3%B3n%20para%20clases%20normales%20de%20Panda%20Tenis."
+                href={`https://wa.me/34633739312?text=${encodeURIComponent(t("waNormalText"))}`}
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-[var(--rule)] bg-[var(--grass)] px-5 text-[13.5px] font-extrabold text-white shadow-[var(--shadow-card)] transition-transform hover:-translate-y-0.5"
               >
                 <WhatsAppIcon className="h-4 w-4" />
-                Clases normales
+                {t("normalClasses")}
               </a>
               <a
-                href="https://wa.me/34633739312?text=Hola%2C%20quiero%20informaci%C3%B3n%20para%20el%20campus%20de%20Panda%20Tenis."
+                href={`https://wa.me/34633739312?text=${encodeURIComponent(t("waCampusText"))}`}
                 className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-[var(--rule)] bg-[var(--coral)] px-5 text-[13.5px] font-extrabold text-white shadow-[var(--shadow-card)] transition-transform hover:-translate-y-0.5"
               >
                 <WhatsAppIcon className="h-4 w-4" />
-                Campus
+                {t("campus")}
               </a>
             </div>
 
             <p className="mt-5 text-sm font-semibold text-[var(--forest)]">
-              También puedes llamar al{" "}
+              {t("callPrefix")}{" "}
               <a href={CONTACT.phoneHref} className="underline decoration-[var(--sun)] decoration-2 underline-offset-4">
                 +34 {CONTACT.phoneDisplay}
               </a>

@@ -4,24 +4,23 @@ import {
   CreditCard,
   GraduationCap,
   LayoutDashboard,
-  MessageCircle,
   UserPlus,
   Users,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { motion, useReducedMotion } from "framer-motion";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
-import { useWhatsappNotifications } from "@/components/admin/whatsapp/notifications-provider";
+import { springBouncy } from "@/components/ui/motion";
 import type { AdminRole } from "@/lib/admin/roles";
 
 const ITEMS = [
   { href: "/admin", labelKey: "panel", icon: LayoutDashboard, match: (p: string) => p === "/admin" },
   { href: "/admin/students", labelKey: "students", icon: Users, match: (p: string) => p.startsWith("/admin/students") },
   { href: "/admin/payments", labelKey: "payments", icon: CreditCard, match: (p: string) => p.startsWith("/admin/payments") },
-  { href: "/admin/whatsapp/chats", labelKey: "whatsapp", icon: MessageCircle, match: (p: string) => p.startsWith("/admin/whatsapp") },
 ] as const satisfies Array<{
   href: string;
-  labelKey: "panel" | "students" | "payments" | "whatsapp";
+  labelKey: "panel" | "students" | "payments";
   icon: typeof LayoutDashboard;
   match: (p: string) => boolean;
 }>;
@@ -48,8 +47,8 @@ const PROFESSOR_ITEMS = [
 
 export function MobileNav({ role }: { role: AdminRole }) {
   const pathname = usePathname() ?? "";
-  const { unreadTotal } = useWhatsappNotifications();
   const t = useTranslations("admin.mobileNav");
+  const reduce = useReducedMotion();
   const items = role === "admin" ? ITEMS : PROFESSOR_ITEMS;
 
   return (
@@ -63,27 +62,30 @@ export function MobileNav({ role }: { role: AdminRole }) {
       {items.map((item) => {
         const active = item.match(pathname);
         const Icon = item.icon;
-        const showBadge = role === "admin" && item.labelKey === "whatsapp" && unreadTotal > 0;
         return (
           <Link
             key={item.href}
             href={item.href as never}
+            aria-current={active ? "page" : undefined}
             className={cn(
-              "relative flex flex-col items-center justify-center gap-0.5 py-2 text-[10.5px] font-semibold transition-colors",
+              "relative flex flex-col items-center justify-center gap-0.5 py-2 text-[10.5px] font-semibold transition-colors active:scale-90",
               active ? "text-foreground" : "text-[var(--muted)] active:text-foreground",
             )}
           >
             {active && (
-              <span className="absolute inset-x-4 top-0 h-[3px] rounded-b-full bg-[var(--accent)]" />
+              <motion.span
+                layoutId="mobilenav-active"
+                className="absolute inset-x-4 top-0 h-[3px] rounded-b-full bg-[var(--accent)]"
+                transition={springBouncy}
+              />
             )}
-            <span className="relative">
+            <motion.span
+              className="relative"
+              animate={reduce ? undefined : { scale: active ? 1.14 : 1, y: active ? -1 : 0 }}
+              transition={springBouncy}
+            >
               <Icon className={cn("h-5 w-5", active && "text-foreground")} />
-              {showBadge && (
-                <span className="absolute -right-2 -top-1 inline-flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--danger)] px-1 text-[9px] font-bold text-white">
-                  {unreadTotal > 9 ? "9+" : unreadTotal}
-                </span>
-              )}
-            </span>
+            </motion.span>
             <span>{t(item.labelKey)}</span>
           </Link>
         );

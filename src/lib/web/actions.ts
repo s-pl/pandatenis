@@ -65,6 +65,21 @@ const RegistrationSchema = z.object({
     .max(500_000, "Firma demasiado grande"),
   consentMultimedia: z.boolean(),
 
+  // Idioma en el que la familia quiere recibir las comunicaciones automáticas.
+  commLocale: z.enum(["es", "en"]).default("es"),
+
+  // "¿Cómo nos conociste?" (slug del origen) — comprobación cruzada de estadísticas.
+  referral: z.enum([
+    "carteles",
+    "flyers",
+    "chapas",
+    "google_web",
+    "instagram",
+    "facebook",
+    "recomendacion",
+    "otro",
+  ]),
+
   company: z.string().trim().max(0).optional().default(""),
 });
 
@@ -396,6 +411,8 @@ export async function submitRegistrationAction(
         preferred_time_blocks:
           registrationType === "campus" ? [] : data.preferredTimeBlocks,
         scheduling_notes: data.schedulingNotes || null,
+        comm_locale: data.commLocale,
+        referral: data.referral,
     };
 
     if (inviteId) {

@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { springSnappy } from "@/components/ui/motion";
 
 const toneStyles: Record<
   string,
@@ -53,12 +54,14 @@ export function KpiCard({
   index?: number;
 }) {
   const styles = toneStyles[tone] ?? toneStyles.primary;
+  const reduce = useReducedMotion();
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, delay: 0.04 * index }}
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 18, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ ...springSnappy, delay: 0.06 * index }}
+      whileHover={reduce ? undefined : { y: -4 }}
       className="relative flex flex-col gap-2.5 overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[var(--shadow-sm)] transition-shadow hover:shadow-[var(--shadow-md)] sm:gap-3 sm:p-5"
     >
       {/* Accent bar at top */}

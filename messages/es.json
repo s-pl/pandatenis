@@ -478,7 +478,15 @@
   },
   "inscription": {
     "openBadge": "Inscripciones abiertas",
-    "title": "Reserva tu plaza en Panda Tenis."
+    "title": "Reserva tu plaza en Panda Tenis.",
+    "whatsappBadge": "Inscripción por WhatsApp",
+    "heading": "Primero hablamos y después te paso tu ficha privada.",
+    "body": "Para clases normales o campus, escríbeme por WhatsApp. Cuando confirmemos plaza, horario o convocatoria, crearé una ficha básica desde el panel y te enviaré un enlace para completar todos los datos del alumno.",
+    "normalClasses": "Clases normales",
+    "campus": "Campus",
+    "callPrefix": "También puedes llamar al",
+    "waNormalText": "Hola, quiero información para clases normales de Panda Tenis.",
+    "waCampusText": "Hola, quiero información para el campus de Panda Tenis."
   },
   "wizard": {
     "steps": {
@@ -495,16 +503,16 @@
       "progressMobile": "Paso {step} de {total}"
     },
     "success": {
-      "title": "¡Inscripción enviada!",
-      "description": "Hemos recibido tu solicitud para <strong>{course}</strong>. Nos pondremos en contacto contigo en menos de 24 horas.",
+      "title": "¡Gracias, {name}!",
+      "titleFallback": "¡Gracias!",
+      "description": "¡Nos vemos en pista!",
       "backHome": "Volver al inicio"
     },
     "info": {
       "title": "Formulario de Inscripción",
       "helloBadge": "ES",
       "hello": "¡Hola!",
-      "intro": "Soy Darío, director de Asociación Panda Tenis.",
-      "alsoPlatform": "También te daremos de alta en nuestra plataforma digital, donde podrás seguir tus logros y progresos en el tenis de forma divertida y motivadora.",
+      "thanks": "¡Bienvenid@! Completa los siguientes datos y forma parte de la familia Panda Tenis.",
       "changeCourse": "Cambiar curso",
       "pickCourse": "Elige el curso o campamento al que quieres inscribirte:",
       "seeYouOnCourt": "¡Nos vemos en pista!"
@@ -547,14 +555,35 @@
         "phone": "Teléfono",
         "phonePlaceholder": "600 000 000",
         "email": "Email",
-        "emailPlaceholder": "email@ejemplo.com (opcional)",
+        "emailPlaceholder": "email@ejemplo.com",
         "add": "Añadir familiar",
-        "remove": "Eliminar"
+        "remove": "Eliminar",
+        "errorIncomplete": "Completa nombre, parentesco y teléfono del familiar.",
+        "errorEmail": "Indica un email válido para el familiar."
       }
     },
     "additional": {
       "title": "Datos adicionales",
       "hint": "Dejar en blanco si no aplica",
+      "referral": {
+        "label": "¿Cómo nos conociste?",
+        "placeholder": "Selecciona una opción",
+        "options": {
+          "carteles": "Carteles",
+          "flyers": "Flyers",
+          "chapas": "Chapas promocionales",
+          "google_web": "Google / Página web",
+          "instagram": "Instagram",
+          "facebook": "Facebook",
+          "recomendacion": "Recomendación de un alumno",
+          "otro": "Otro"
+        }
+      },
+      "commLocale": {
+        "label": "¿En qué idioma desea recibir las comunicaciones?",
+        "es": "Español",
+        "en": "English"
+      },
       "allergies": "Alergias",
       "illnesses": "Enfermedades",
       "injuries": "Lesiones",
@@ -692,8 +721,6 @@
     },
     "sidebar": {
       "favorites": "Favoritos",
-      "enableNotifTitle": "Activar avisos",
-      "enableNotifText": "Recibe notificaciones del navegador para WhatsApp.",
       "openMenu": "Abrir menú",
       "closeMenu": "Cerrar menú",
       "signOut": "Cerrar sesión",
@@ -704,7 +731,6 @@
         "community": "Comunidad",
         "school": "Escuela",
         "camps": "Campus",
-        "marketing": "Marketing",
         "finance": "Finanzas",
         "control": "Control del Club"
       },
@@ -721,10 +747,10 @@
         "reports": "Informes",
         "gallery": "Galería",
         "campusBoard": "Campus",
+        "qr": "Códigos QR",
+        "sms": "SMS",
+        "promotions": "Promociones",
         "registrations": "Inscripciones",
-        "chats": "Conversaciones",
-        "sends": "Envíos",
-        "connection": "Conexión",
         "payments": "Pagos y recibos",
         "settings": "Ajustes"
       }
@@ -733,7 +759,6 @@
       "panel": "Panel",
       "students": "Alumnos",
       "payments": "Pagos",
-      "whatsapp": "WhatsApp",
       "attendance": "Asistencia",
       "registrations": "Fichas"
     },
@@ -749,10 +774,7 @@
       "payments": "Pagos",
       "registrations": "Inscripciones",
       "leads": "Contactos",
-      "whatsapp": "WhatsApp",
-      "chat": "Chat",
-      "chats": "Conversaciones",
-      "connection": "Conexión",
+      "sms": "SMS",
       "groups": "Grupos",
       "calendar": "Calendario",
       "campus": "Campus",
@@ -774,7 +796,7 @@
       },
       "leads": {
         "title": "Contactos interesados",
-        "description": "Familias que han pedido información desde la web o directamente. Llámalas o inicia WhatsApp con una plantilla aprobada."
+        "description": "Familias que han pedido información desde la web o directamente. Llámalas para avanzar su solicitud."
       },
       "groups": {
         "title": "Gestión de Grupos",
@@ -807,18 +829,6 @@
       "registrations": {
         "title": "Inscripciones",
         "description": "Inscripciones recibidas para escuela y campus."
-      },
-      "whatsappChats": {
-        "title": "Conversaciones WhatsApp",
-        "description": "Habla individualmente con cada familia desde el panel. Los mensajes entrantes aparecen en tiempo real."
-      },
-      "whatsappConnection": {
-        "title": "Conexión WhatsApp",
-        "description": "Estado del número conectado a WhatsApp Business Cloud API y configuración del webhook entrante."
-      },
-      "whatsapp": {
-        "title": "WhatsApp",
-        "description": "Bandeja, plantillas y envíos masivos con Meta Cloud API. Importa familias desde CSV o TSV sin pelearte con el formato."
       },
       "payments": {
         "title": "Pagos y recibos",
@@ -870,14 +880,12 @@
         "quickActions": "Acciones rápidas",
         "act": {
           "createStudent": "Crear nuevo alumno",
-          "sendBroadcast": "Enviar comunicado",
           "reviewRegistrations": "Revisar inscripciones",
           "awardMedal": "Otorgar una medalla",
           "paymentReminder": "Recordatorio de pagos",
           "uploadPhotos": "Subir fotos a la galería",
           "scheduleCamp": "Programar campus",
-          "takeAttendance": "Pasar lista de asistencia",
-          "openWhatsapp": "Abrir WhatsApp"
+          "takeAttendance": "Pasar lista de asistencia"
         },
         "dueOverdue": "Atrasado",
         "duePending": "Pendiente",
@@ -899,9 +907,7 @@
       "quick": {
         "newStudent": "Nuevo alumno",
         "recordPayment": "Registrar pago",
-        "takeAttendance": "Pasar lista",
-        "sendBroadcast": "Enviar difusión",
-        "openWhatsapp": "Abrir WhatsApp"
+        "takeAttendance": "Pasar lista"
       }
     },
     "error": {

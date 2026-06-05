@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -26,6 +27,7 @@ export function DropdownMenu({
   triggerLabel,
   align = "end",
   menuClassName,
+  onOpenChange,
   children,
 }: {
   trigger: ReactNode;
@@ -33,10 +35,20 @@ export function DropdownMenu({
   triggerLabel?: string;
   align?: "start" | "end";
   menuClassName?: string;
+  /** Notifica cada vez que el menú se abre o cierra. */
+  onOpenChange?: (open: boolean) => void;
   children: ReactNode;
 }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpenState] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+
+  const setOpen = useCallback(
+    (next: boolean) => {
+      setOpenState(next);
+      onOpenChange?.(next);
+    },
+    [onOpenChange],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -52,13 +64,13 @@ export function DropdownMenu({
       document.removeEventListener("mousedown", onPointer);
       document.removeEventListener("keydown", onKey);
     };
-  }, [open]);
+  }, [open, setOpen]);
 
   return (
     <div ref={rootRef} className="relative">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(!open)}
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={triggerLabel}

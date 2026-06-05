@@ -42,7 +42,7 @@ export function Tabs({
         role="tablist"
         className="no-scrollbar flex items-center gap-1 overflow-x-auto pb-2"
       >
-        {items.map((item) => {
+        {items.map((item, idx) => {
           const active = item.value === value;
           return (
             <button
@@ -50,8 +50,20 @@ export function Tabs({
               type="button"
               role="tab"
               aria-selected={active}
+              tabIndex={active ? 0 : -1}
               data-tab={item.value}
               onClick={() => onChange(item.value)}
+              onKeyDown={(e) => {
+                if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+                e.preventDefault();
+                const dir = e.key === "ArrowRight" ? 1 : -1;
+                const next = (idx + dir + items.length) % items.length;
+                onChange(items[next].value);
+                const container = containerRef.current;
+                container
+                  ?.querySelector<HTMLElement>(`[data-tab="${items[next].value}"]`)
+                  ?.focus();
+              }}
               className={cn(
                 "inline-flex h-9 flex-shrink-0 items-center gap-2 rounded-lg px-3.5 text-[13.5px] font-semibold transition-all",
                 active

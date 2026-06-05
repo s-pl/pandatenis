@@ -10,10 +10,8 @@ import {
   GraduationCap,
   Image as ImageIcon,
   Medal,
-  MessageCircle,
   PhoneCall,
   Plus,
-  Send,
   Sparkles,
   TrendingUp,
   Trophy,
@@ -28,7 +26,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { PageShell } from "@/components/admin/page-shell";
 import { RealtimeRefresh } from "@/components/admin/realtime-refresh";
 import { KpiCard } from "@/components/admin/kpi-card";
-import { CommunicateBanner } from "@/components/admin/communicate-banner";
 import { ActionCenter } from "@/components/admin/action-center";
 import { ActionRow, ExpandableSection } from "@/components/admin/expandable-section";
 import { AttendanceBarChart } from "@/components/charts/attendance-bar-chart";
@@ -38,9 +35,7 @@ import {
   formatLongDate,
   formatMoney,
   formatShortDate,
-  normalizeWhatsappNumber,
 } from "@/lib/format";
-import { QuickTemplateButton } from "@/components/admin/whatsapp/quick-template-button";
 import { requireStaff } from "@/lib/dal";
 import {
   fetchAttendanceSeries,
@@ -98,7 +93,6 @@ export default async function DashboardPage() {
       description={t("subtitle")}
     >
       <RealtimeRefresh tables={["payments", "students", "attendance_records"]} />
-      <CommunicateBanner />
       <ActionCenter items={actions} />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
@@ -304,17 +298,6 @@ export default async function DashboardPage() {
                       <Badge tone={p.status === "atrasado" ? "danger" : "warning"}>
                         {p.status === "atrasado" ? t("dueOverdue") : t("duePending")}
                       </Badge>
-                      {p.guardianPhone && (
-                        <QuickTemplateButton
-                          phone={normalizeWhatsappNumber(p.guardianPhone)}
-                          recipientName={p.studentName}
-                          defaultVariables={{
-                            "1": p.studentName,
-                            "2": p.concept,
-                            "3": formatMoney(p.amount, true),
-                          }}
-                        />
-                      )}
                     </div>
                   </li>
                 ))}
@@ -408,14 +391,12 @@ export default async function DashboardPage() {
         <CardHeader title={t("quickActions")} />
         <CardBody className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
           <ActionRow icon={<UserPlus className="h-4 w-4" />} label={t("act.createStudent")} href="/admin/students" highlight />
-          <ActionRow icon={<Send className="h-4 w-4" />} label={t("act.sendBroadcast")} href="/admin/whatsapp" />
           <ActionRow icon={<UserCheck className="h-4 w-4" />} label={t("act.reviewRegistrations")} href="/admin/registrations" />
           <ActionRow icon={<Medal className="h-4 w-4" />} label={t("act.awardMedal")} href="/admin/medals" />
           <ActionRow icon={<BellRing className="h-4 w-4" />} label={t("act.paymentReminder")} href="/admin/payments" />
           <ActionRow icon={<ImageIcon className="h-4 w-4" />} label={t("act.uploadPhotos")} href="/admin/gallery" />
           <ActionRow icon={<Trophy className="h-4 w-4" />} label={t("act.scheduleCamp")} href="/admin/campus" />
           <ActionRow icon={<Users className="h-4 w-4" />} label={t("act.takeAttendance")} href="/admin/attendance" />
-          <ActionRow icon={<MessageCircle className="h-4 w-4" />} label={t("act.openWhatsapp")} href="/admin/whatsapp/chats" />
         </CardBody>
       </Card>
     </PageShell>

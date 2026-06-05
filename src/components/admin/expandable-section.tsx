@@ -60,6 +60,7 @@ export function ExpandableSection({
         type="button"
         onClick={() => expandable && setExpanded((v) => !v)}
         disabled={!expandable}
+        aria-expanded={expandable ? expanded : undefined}
         className={cn(
           "flex w-full flex-col gap-1.5 px-4 py-3 text-left transition-colors sm:flex-row sm:items-center sm:gap-3 sm:px-5 sm:py-3.5",
           expandable && "cursor-pointer hover:bg-[var(--surface-muted)]/40 active:bg-[var(--surface-muted)]",

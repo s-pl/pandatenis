@@ -6,12 +6,12 @@ import {
   LayoutDashboard,
   MapPinned,
   Medal,
-  MessageCircle,
+  Megaphone,
+  MessageSquare,
   PhoneCall,
+  QrCode,
   ScrollText,
-  Send,
   Settings,
-  Smartphone,
   Sparkles,
   Sun,
   UserPlus,
@@ -30,7 +30,6 @@ export type AdminNavItem = {
   href: string;
   itemKey: string;
   Icon: LucideIcon;
-  badgeKey?: "whatsapp-unread";
   roles?: AdminRole[];
 };
 
@@ -55,6 +54,7 @@ export const ADMIN_NAV: AdminNavGroup[] = [
     items: [
       { href: "/admin/students", itemKey: "students", Icon: Users },
       { href: "/admin/leads", itemKey: "leads", Icon: PhoneCall },
+      { href: "/admin/sms", itemKey: "sms", Icon: MessageSquare },
       { href: "/admin/attendance", itemKey: "attendance", Icon: GraduationCap, roles: ["admin", "profesor"] },
       { href: "/admin/registrations", itemKey: "registrations", Icon: UserPlus, roles: ["profesor"] },
     ],
@@ -76,16 +76,9 @@ export const ADMIN_NAV: AdminNavGroup[] = [
     dot: "#f97316",
     items: [
       { href: "/admin/campus", itemKey: "campusBoard", Icon: Sun },
+      { href: "/admin/qr", itemKey: "qr", Icon: QrCode },
+      { href: "/admin/promotions", itemKey: "promotions", Icon: Megaphone },
       { href: "/admin/registrations?type=campus", itemKey: "registrations", Icon: UserPlus },
-    ],
-  },
-  {
-    groupKey: "marketing",
-    dot: "#ef4444",
-    items: [
-      { href: "/admin/whatsapp/chats", itemKey: "chats", Icon: MessageCircle, badgeKey: "whatsapp-unread" },
-      { href: "/admin/whatsapp", itemKey: "sends", Icon: Send },
-      { href: "/admin/whatsapp/conexion", itemKey: "connection", Icon: Smartphone },
     ],
   },
   {

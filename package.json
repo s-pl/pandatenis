@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test:whatsapp": "node scripts/whatsapp-pipeline-tests.mjs",
     "test:panel": "node scripts/panel-operations-tests.mjs",
     "test:flows": "node scripts/critical-flow-tests.mjs",
     "smoke": "node scripts/smoke.mjs",
@@ -17,6 +16,7 @@
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.106.0",
+    "@types/qrcode": "^1.5.6",
     "clsx": "^2.1.1",
     "date-fns": "^4.2.1",
     "framer-motion": "^12.39.0",
@@ -24,6 +24,7 @@
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
     "next-intl": "^4.12.0",
+    "qrcode": "^1.5.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "recharts": "^3.8.1",

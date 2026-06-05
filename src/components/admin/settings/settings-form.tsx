@@ -101,11 +101,114 @@ export function SettingsForm({
                 onChange={(e) => set("receiptPrefix", e.target.value.toUpperCase())}
               />
             </Field>
-            <Field label="Razón social fiscal">
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader
+            title="Datos fiscales (facturación)"
+            description="Estos datos identifican al emisor en cada factura. El NIF es obligatorio para que la factura sea válida en España."
+          />
+          <CardBody className="grid gap-4 sm:grid-cols-2">
+            <Field label="Razón social fiscal" hint="Nombre legal de la entidad. Ej.: Asociación Panda Tenis">
               <Input value={values.fiscalName} onChange={(e) => set("fiscalName", e.target.value)} />
             </Field>
-            <Field label="Dirección fiscal">
+            <Field label="NIF / CIF" hint="Obligatorio en factura">
+              <Input value={values.fiscalNif} onChange={(e) => set("fiscalNif", e.target.value.toUpperCase())} />
+            </Field>
+            <Field label="Email de contacto">
+              <Input type="email" value={values.fiscalEmail} onChange={(e) => set("fiscalEmail", e.target.value)} />
+            </Field>
+            <Field label="Teléfono">
+              <Input value={values.fiscalPhone} onChange={(e) => set("fiscalPhone", e.target.value)} />
+            </Field>
+            <Field label="Dirección fiscal" className="sm:col-span-2">
               <Textarea value={values.fiscalAddress} onChange={(e) => set("fiscalAddress", e.target.value)} rows={2} />
+            </Field>
+            <Field
+              label="Pie de factura"
+              className="sm:col-span-2"
+              hint="Nota libre al final de cada factura (condiciones de pago, agradecimiento…)."
+            >
+              <Textarea value={values.invoiceFooter} onChange={(e) => set("invoiceFooter", e.target.value)} rows={2} />
+            </Field>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader
+            title="Reservas por WhatsApp"
+            description="Número y mensaje que se usan en el botón “Reserva tu plaza” de los carteles de promoción."
+          />
+          <CardBody className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label="Número de WhatsApp"
+              hint="Formato internacional con prefijo de país. Ej.: 34600123456"
+            >
+              <Input
+                value={values.whatsappBookingNumber}
+                onChange={(e) => set("whatsappBookingNumber", e.target.value)}
+                placeholder="34600123456"
+              />
+            </Field>
+            <div className="hidden sm:block" />
+            <Field label="Mensaje prerrellenado (español)" hint="Texto con el que el cliente abre el chat.">
+              <Textarea
+                value={values.whatsappBookingMsgEs}
+                onChange={(e) => set("whatsappBookingMsgEs", e.target.value)}
+                rows={2}
+                placeholder="¡Hola! Me interesa la actividad…"
+              />
+            </Field>
+            <Field label="Mensaje prerrellenado (inglés)" hint="Para clientes en inglés.">
+              <Textarea
+                value={values.whatsappBookingMsgEn}
+                onChange={(e) => set("whatsappBookingMsgEn", e.target.value)}
+                rows={2}
+                placeholder="Hi! I'm interested in the activity…"
+              />
+            </Field>
+          </CardBody>
+        </Card>
+
+        <Card>
+          <CardHeader
+            title="SMS de bienvenida"
+            description="Si está activo, al convertir una inscripción en alumno se envía un SMS de bienvenida al tutor (en su idioma)."
+          />
+          <CardBody className="grid gap-4 sm:grid-cols-2">
+            <label className="flex items-center gap-3 sm:col-span-2">
+              <input
+                type="checkbox"
+                checked={values.smsWelcomeEnabled}
+                onChange={(e) => set("smsWelcomeEnabled", e.target.checked)}
+                className="h-4 w-4"
+              />
+              <span className="text-[13.5px] font-semibold text-foreground">
+                Enviar SMS de bienvenida al crear el alumno
+              </span>
+            </label>
+            <Field
+              label="Mensaje de bienvenida (español)"
+              hint="Opcional. Si lo dejas vacío se usa un texto por defecto. Puedes usar {nombre}."
+            >
+              <Textarea
+                value={values.smsWelcomeMsgEs}
+                onChange={(e) => set("smsWelcomeMsgEs", e.target.value)}
+                rows={2}
+                placeholder="¡Bienvenid@ a Panda Tenis, {nombre}! ¡Nos vemos en pista!"
+              />
+            </Field>
+            <Field
+              label="Mensaje de bienvenida (inglés)"
+              hint="Opcional. Para tutores en inglés. Puedes usar {name}."
+            >
+              <Textarea
+                value={values.smsWelcomeMsgEn}
+                onChange={(e) => set("smsWelcomeMsgEn", e.target.value)}
+                rows={2}
+                placeholder="Welcome to Panda Tennis, {name}! See you on court!"
+              />
             </Field>
           </CardBody>
         </Card>
@@ -209,7 +312,7 @@ export function SettingsForm({
                 <p className="mt-0.5 text-xs text-[var(--muted)]">
                   {demoActive
                     ? "El panel está mostrando datos generados por el seeder. Desactiva para borrarlos."
-                    : "Activa para rellenar el panel con datos de ejemplo (grupos, alumnos, pagos, inscripciones, WhatsApp)."}
+                    : "Activa para rellenar el panel con datos de ejemplo (grupos, alumnos, pagos, inscripciones)."}
                 </p>
               </div>
             </div>

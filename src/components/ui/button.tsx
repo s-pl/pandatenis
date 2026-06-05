@@ -22,7 +22,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
  */
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-full border-2 border-[var(--forest)] font-extrabold tracking-tight transition-transform duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-[0_2px_0_var(--forest)] disabled:translate-y-0 hover:-translate-y-0.5 active:translate-y-0";
+  "inline-flex items-center justify-center gap-2 rounded-full border-2 border-[var(--forest)] font-extrabold tracking-tight transition-transform duration-150 ease-out disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-[0_2px_0_var(--forest)] disabled:translate-y-0 disabled:hover:scale-100 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.96]";
 
 const variants: Record<Variant, string> = {
   primary:

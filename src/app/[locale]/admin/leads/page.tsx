@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageShell } from "@/components/admin/page-shell";
 import { LeadsManager } from "@/components/admin/leads/leads-manager";
-import type { ApprovedTemplate } from "@/components/admin/whatsapp/template-composer";
+import { LeadsMetrics } from "@/components/admin/leads/leads-metrics";
 import { requireAdmin } from "@/lib/dal";
+import { fetchCampusLeadMetrics } from "@/lib/admin/queries";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("admin.breadcrumbs");
@@ -19,7 +20,7 @@ export default async function LeadsPage() {
   const { supabase } = await requireAdmin();
   const tPage = await getTranslations("admin.pages.leads");
 
-  const [leadsRes, sourcesRes, profilesRes, approvedTemplatesRes] = await Promise.all([
+  const [leadsRes, sourcesRes, profilesRes, metrics] = await Promise.all([
     supabase
       .from("leads")
       .select("id, full_name, phone, child_age, interest, source_id, observations, status, next_action_at, assigned_to, lost_reason, whatsapp_consent, marketing_consent, consent_source, consent_text, consent_at, created_at, lead_sources(name)")
@@ -27,11 +28,7 @@ export default async function LeadsPage() {
       .limit(3000),
     supabase.from("lead_sources").select("id, name").order("name"),
     supabase.from("profiles").select("id, full_name").order("full_name"),
-    supabase
-      .from("message_templates")
-      .select("id, name, body, language, category, components_schema")
-      .eq("meta_status", "approved")
-      .order("name"),
+    fetchCampusLeadMetrics(supabase),
   ]);
 
   const leads = (leadsRes.data ?? []).map((row) => {
@@ -66,16 +63,7 @@ export default async function LeadsPage() {
 
   const sources = (sourcesRes.data ?? []).map((row) => ({ id: row.id, name: row.name }));
   const profiles = (profilesRes.data ?? []).map((row) => ({ id: row.id, fullName: row.full_name }));
-  const approvedTemplates: ApprovedTemplate[] = (approvedTemplatesRes.data ?? []).map((row) => ({
-    id: row.id,
-    name: row.name,
-    body: row.body,
-    language: row.language ?? "es",
-    category: row.category,
-    componentsSchema: (row.components_schema ?? null) as
-      | { body?: { variables?: string[] } }
-      | null,
-  }));
+  const activeLeads = leads.filter((lead) => lead.status !== "convertido");
   const newCount = leads.filter((lead) => lead.status === "nuevo").length;
   const webCount = leads.filter((lead) => lead.sourceName.toLowerCase() === "web").length;
 
@@ -87,7 +75,7 @@ export default async function LeadsPage() {
       meta={
         <>
           <Badge tone="primary" iconLeft={<PhoneCall className="h-3 w-3" />}>
-            {leads.length} contactos
+            {activeLeads.length} contactos
           </Badge>
           {newCount > 0 && <Badge tone="warning">{newCount} pendientes de llamar</Badge>}
           {webCount > 0 && (
@@ -105,13 +93,15 @@ export default async function LeadsPage() {
         </Link>
       }
     >
-      <LeadsManager
-        leads={leads}
-        sources={sources}
-        profiles={profiles}
-        approvedTemplates={approvedTemplates}
-        referenceNow={new Date().toISOString()}
-      />
+      <div className="grid gap-4">
+        <LeadsMetrics data={metrics} />
+        <LeadsManager
+          leads={leads}
+          sources={sources}
+          profiles={profiles}
+          referenceNow={new Date().toISOString()}
+        />
+      </div>
     </PageShell>
   );
 }

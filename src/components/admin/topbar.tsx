@@ -31,10 +31,7 @@ const ROUTE_MAP: Array<{ pattern: RegExp; crumbs: string[] }> = [
   { pattern: /^\/admin\/payments/, crumbs: ["payments"] },
   { pattern: /^\/admin\/registrations/, crumbs: ["registrations"] },
   { pattern: /^\/admin\/leads/, crumbs: ["leads"] },
-  { pattern: /^\/admin\/whatsapp\/chats\/[^/]+/, crumbs: ["whatsapp", "chat"] },
-  { pattern: /^\/admin\/whatsapp\/chats/, crumbs: ["whatsapp", "chats"] },
-  { pattern: /^\/admin\/whatsapp\/conexion/, crumbs: ["whatsapp", "connection"] },
-  { pattern: /^\/admin\/whatsapp/, crumbs: ["whatsapp"] },
+  { pattern: /^\/admin\/sms/, crumbs: ["sms"] },
   { pattern: /^\/admin\/groups/, crumbs: ["groups"] },
   { pattern: /^\/admin\/calendar/, crumbs: ["calendar"] },
   { pattern: /^\/admin\/settings/, crumbs: ["settings"] },
@@ -151,6 +148,47 @@ export function AdminTopbar({
               <p className="truncate text-[11.5px] text-[var(--muted)]">{email}</p>
             </div>
             <DropdownSeparator />
+            <DropdownItem
+              icon={theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              onSelect={toggle}
+              closeOnSelect={false}
+            >
+              {theme === "dark" ? tTop("lightMode") : tTop("darkMode")}
+            </DropdownItem>
+            <DropdownItem
+              icon={<Settings className="h-4 w-4" />}
+              onSelect={() => router.push("/admin/settings")}
+            >
+              {t("settings")}
+            </DropdownItem>
+            <DropdownSeparator />
+            <DropdownItem
+              icon={<LogOut className="h-4 w-4" />}
+              tone="danger"
+              onSelect={handleSignOut}
+            >
+              {signingOut ? tSide("signOut") + "…" : tSide("signOut")}
+            </DropdownItem>
+          </DropdownMenu>
+        </div>
+
+        {/* Móvil: tema, idioma, perfil y cerrar sesión en un único menú. */}
+        <div className="flex lg:hidden">
+          <DropdownMenu
+            align="end"
+            triggerLabel={tTop("profile")}
+            triggerClassName="ml-1 grid h-8 w-8 place-items-center rounded-full bg-[var(--primary)] text-[11px] font-bold text-white transition-transform active:scale-90"
+            trigger={initials(fullName)}
+          >
+            <div className="px-2.5 pb-2 pt-1.5">
+              <p className="truncate text-[13px] font-semibold text-foreground">{fullName}</p>
+              <p className="truncate text-[11.5px] text-[var(--muted)]">{email}</p>
+            </div>
+            <DropdownSeparator />
+            <div className="flex items-center justify-between px-2.5 py-1.5">
+              <span className="text-[13.5px] font-medium text-foreground">{tTop("language")}</span>
+              <LanguageSwitcher variant="iconOnly" />
+            </div>
             <DropdownItem
               icon={theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               onSelect={toggle}

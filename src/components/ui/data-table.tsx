@@ -256,11 +256,15 @@ export function DataTable<T>({
 
           {/* ── Rows ───────────────────────────────────────────────── */}
           <div>
-            {paginated.map((row) => {
+            {paginated.map((row, i) => {
               const active = isActiveRow?.(row) ?? false;
               const key = rowKey(row);
               return (
-                <div key={key} className="relative">
+                <div
+                  key={key}
+                  className="dt-row-in relative"
+                  style={{ animationDelay: `${Math.min(i, 14) * 0.03}s` }}
+                >
                   {active && (
                     <span
                       className="absolute inset-y-0 left-0 z-10 w-[3px] bg-[var(--accent)]"

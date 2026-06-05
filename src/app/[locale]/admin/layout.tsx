@@ -3,7 +3,6 @@ import { AdminSidebar } from "@/components/admin/sidebar";
 import { AdminTopbar } from "@/components/admin/topbar";
 import { MobileNav } from "@/components/admin/mobile-nav";
 import { PageTransition } from "@/components/admin/page-transition";
-import { WhatsappNotificationsProvider } from "@/components/admin/whatsapp/notifications-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CommandPaletteProvider } from "@/components/admin/command-palette";
 import { requireStaff } from "@/lib/dal";
@@ -31,13 +30,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <ThemeProvider>
-      <CommandPaletteProvider role={profile.role}>
-        {profile.role !== "admin" ? (
-          shell
-        ) : (
-          <WhatsappNotificationsProvider>{shell}</WhatsappNotificationsProvider>
-        )}
-      </CommandPaletteProvider>
+      <CommandPaletteProvider role={profile.role}>{shell}</CommandPaletteProvider>
     </ThemeProvider>
   );
 }

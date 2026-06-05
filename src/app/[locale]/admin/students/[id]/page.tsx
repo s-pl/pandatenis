@@ -10,7 +10,6 @@ import { StudentDetail } from "@/components/admin/students/student-detail";
 import { EditStudentButton } from "@/components/admin/students/edit-student-button";
 import { avatarUrl, buildAvatarSeed } from "@/lib/avatar";
 import { requireAdmin } from "@/lib/dal";
-import { normalizeWhatsappNumber } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -43,7 +42,7 @@ export default async function StudentDetailPage({
   ] = await Promise.all([
     supabase
       .from("students")
-      .select("id, first_name, last_name, birth_date, address, level, dominant_hand, group_id, professor_id, medical_info, image_consent, coach_notes, active, start_date")
+      .select("id, first_name, last_name, birth_date, address, level, dominant_hand, group_id, professor_id, medical_info, image_consent, coach_notes, comm_locale, active, start_date")
       .eq("id", id)
       .maybeSingle(),
     supabase.from("guardians").select("id, full_name, phone, email, relationship").eq("student_id", id),
@@ -149,22 +148,6 @@ export default async function StudentDetailPage({
   const absences = attendanceRows.filter((row) => row.status === "no_asistio").length;
 
   const fullName = `${student.first_name} ${student.last_name}`;
-  const whatsappPhone = guardian?.phone ? normalizeWhatsappNumber(guardian.phone) : "";
-  const [{ data: whatsappMessages }, { data: whatsappConversation }] = whatsappPhone
-    ? await Promise.all([
-        supabase
-          .from("whatsapp_messages")
-          .select("id, direction, status, body_text, template_name, created_at")
-          .eq("recipient_phone", whatsappPhone)
-          .order("created_at", { ascending: false })
-          .limit(5),
-        supabase
-          .from("whatsapp_conversations")
-          .select("tags, internal_note, marketing_opt_out, last_inbound_at, last_outbound_at, last_message_at")
-          .eq("phone", whatsappPhone)
-          .maybeSingle(),
-      ])
-    : [{ data: [] }, { data: null }];
 
   return (
     <PageShell
@@ -219,6 +202,7 @@ export default async function StudentDetailPage({
               guardianPhone: guardian?.phone ?? "",
               guardianEmail: guardian?.email ?? "",
               relationship: guardian?.relationship ?? "Madre",
+              commLocale: student.comm_locale === "en" ? "en" : "es",
             }}
           />
         </>
@@ -261,20 +245,6 @@ export default async function StudentDetailPage({
           uploadedAt: row.uploaded_at,
           consentChecked: row.consent_checked,
         }))}
-        whatsapp={{
-          phone: whatsappPhone || null,
-          tags: Array.isArray(whatsappConversation?.tags) ? whatsappConversation.tags : [],
-          internalNote: whatsappConversation?.internal_note ?? null,
-          marketingOptOut: Boolean(whatsappConversation?.marketing_opt_out),
-          lastMessageAt: whatsappConversation?.last_message_at ?? null,
-          messages: (whatsappMessages ?? []).map((row) => ({
-            id: row.id,
-            direction: row.direction as "inbound" | "outbound",
-            status: row.status as string,
-            body: row.body_text ?? row.template_name ?? "",
-            createdAt: row.created_at,
-          })),
-        }}
       />
     </PageShell>
   );

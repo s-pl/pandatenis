@@ -4,11 +4,13 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { X } from "lucide-react";
 import {
   useEffect,
+  useId,
   useRef,
   useState,
   type ReactNode,
 } from "react";
 import { cn } from "@/lib/utils";
+import { useFocusTrap } from "@/lib/hooks/use-focus-trap";
 
 type Tone = "neutral" | "primary" | "danger" | "warning" | "success";
 
@@ -65,7 +67,10 @@ export function Modal({
 }) {
   const reducedMotion = useReducedMotion();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useFocusTrap<HTMLDivElement>(open);
   const [scrolled, setScrolled] = useState(false);
+  const titleId = useId();
+  const descId = useId();
 
   useEffect(() => {
     if (!open) return;
@@ -143,8 +148,11 @@ export function Modal({
                   : `0 0 0 1px ${TONE_RING[tone]}30, 0 24px 64px -16px rgba(15,30,22,0.45)`,
             }}
             onClick={(e) => e.stopPropagation()}
+            ref={dialogRef}
             role="dialog"
             aria-modal="true"
+            aria-labelledby={title ? titleId : undefined}
+            aria-describedby={description ? descId : undefined}
           >
             {/* Drag handle (mobile only) — grande para invitar a deslizar */}
             <div className="flex flex-shrink-0 justify-center pt-2.5 pb-1 sm:hidden">
@@ -177,12 +185,12 @@ export function Modal({
                 )}
                 <div className="min-w-0 flex-1 pt-0.5">
                   {title && (
-                    <h2 className="text-[17px] font-bold leading-tight text-[var(--foreground)] sm:text-[18px]">
+                    <h2 id={titleId} className="text-[17px] font-bold leading-tight text-[var(--foreground)] sm:text-[18px]">
                       {title}
                     </h2>
                   )}
                   {description && (
-                    <p className="mt-1 text-[13px] leading-snug text-[var(--muted)]">
+                    <p id={descId} className="mt-1 text-[13px] leading-snug text-[var(--muted)]">
                       {description}
                     </p>
                   )}

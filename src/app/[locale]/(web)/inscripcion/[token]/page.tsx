@@ -19,7 +19,7 @@ const COPY = {
     privateBadge: "Ficha privada",
     title: "Completar inscripción",
     description:
-      "Ya hemos hablado por WhatsApp. Ahora solo falta completar los datos para dejar la ficha lista.",
+      "Solo falta completar los datos para dejar la ficha lista.",
     expiredTitle: "Enlace no disponible",
     expiredDescription:
       "Esta ficha ha caducado o ya no existe. Escríbenos por WhatsApp y te enviamos un enlace nuevo.",
@@ -34,7 +34,7 @@ const COPY = {
     privateBadge: "Private form",
     title: "Complete registration",
     description:
-      "We have already spoken on WhatsApp. Now we just need the details to finish the registration form.",
+      "Just complete the details to finish your registration form.",
     expiredTitle: "Link unavailable",
     expiredDescription:
       "This form has expired or no longer exists. Message us on WhatsApp and we will send you a new link.",

@@ -8,6 +8,9 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { recordAdminActivity } from "@/lib/admin/activity";
 import { requireAdmin, requireStaff } from "@/lib/dal";
 import { normalizeWhatsappNumber } from "@/lib/format";
+import { appBaseUrl } from "@/lib/base-url";
+import { sendAndLog } from "@/lib/sms/send-and-log";
+import { welcomeSms } from "@/lib/sms/templates";
 import { createServiceRoleClient } from "@/lib/supabase/service-role";
 import {
   isMissingInviteLocaleColumn,
@@ -67,6 +70,18 @@ function newInviteToken(): string {
 
 const PENDING_CHILD_NAME = "Alumno pendiente";
 const SCHOOL_COURSE_SLUG = "escuela-2025-2026";
+
+/** Etiquetas legibles de "¿Cómo nos conociste?" (slug → texto). */
+const REFERRAL_LABELS: Record<string, string> = {
+  carteles: "Carteles",
+  flyers: "Flyers",
+  chapas: "Chapas promocionales",
+  google_web: "Google / Página web",
+  instagram: "Instagram",
+  facebook: "Facebook",
+  recomendacion: "Recomendación de un alumno",
+  otro: "Otro",
+};
 const PENDING_CAMPUS_SLUG = "campus-pendiente";
 
 type RegistrationRelation = {
@@ -164,13 +179,13 @@ export async function createRegistrationInviteAction(
       type: data.type,
       courseSlug: data.courseSlug,
     });
-    const whatsappContext =
+    const contactContext =
       data.guardianName || phone
-        ? `Contexto WhatsApp: ${[data.guardianName, phone ? `+${phone}` : ""].filter(Boolean).join(" · ")}`
+        ? `Contacto familia: ${[data.guardianName, phone ? `+${phone}` : ""].filter(Boolean).join(" · ")}`
         : null;
 
     const adminNotes = withInviteStaffNote(
-      withInviteLocaleNote(whatsappContext, data.locale),
+      withInviteLocaleNote(contactContext, data.locale),
       profile.id,
     );
 
@@ -218,7 +233,7 @@ export async function createRegistrationInviteAction(
         type: data.type,
         courseSlug,
         locale: data.locale,
-        hasWhatsappContext: Boolean(data.guardianName || phone),
+        hasContactContext: Boolean(data.guardianName || phone),
       },
     });
 
@@ -272,7 +287,7 @@ export async function convertRegistrationToStudentAction(
     const { data: registration, error } = await supabase
       .from("registrations")
       .select(
-        "id, status, student_id, lead_id, child_name, child_last_name, child_birth_date, full_name, phone, email, family_relations, allergies, illnesses, injuries, consent_multimedia, preferred_days, preferred_time_blocks, course_slug, scheduling_notes",
+        "id, status, student_id, lead_id, child_name, child_last_name, child_birth_date, full_name, phone, email, family_relations, allergies, illnesses, injuries, consent_multimedia, preferred_days, preferred_time_blocks, course_slug, scheduling_notes, comm_locale, referral",
       )
       .eq("id", data.registrationId)
       .maybeSingle();
@@ -334,7 +349,31 @@ export async function convertRegistrationToStudentAction(
       assignedGroupName = group.name;
     }
 
+    // Conserva el origen y la fecha de entrada del lead al pasar a alumno.
+    let leadOriginNote: string | null = null;
+    if (registration.lead_id) {
+      const { data: lead } = await supabase
+        .from("leads")
+        .select("created_at, lead_sources(name)")
+        .eq("id", registration.lead_id)
+        .maybeSingle();
+      if (lead) {
+        const source = Array.isArray(lead.lead_sources)
+          ? lead.lead_sources[0]?.name
+          : (lead.lead_sources as { name?: string } | null)?.name;
+        const entryDate = lead.created_at ? String(lead.created_at).slice(0, 10) : null;
+        leadOriginNote = [
+          source ? `Origen: ${source}` : null,
+          entryDate ? `captado el ${entryDate}` : null,
+        ]
+          .filter(Boolean)
+          .join(" · ");
+      }
+    }
+
     const notes = [
+      leadOriginNote || null,
+      registration.referral ? `¿Cómo nos conoció?: ${REFERRAL_LABELS[registration.referral] ?? registration.referral}` : null,
       registration.course_slug ? `Origen inscripción: ${registration.course_slug}` : null,
       assignedGroupName ? `Grupo asignado: ${assignedGroupName}` : null,
       registration.scheduling_notes ? `Preferencias: ${registration.scheduling_notes}` : null,
@@ -361,6 +400,7 @@ export async function convertRegistrationToStudentAction(
         preferred_time_blocks: Array.isArray(registration.preferred_time_blocks)
           ? registration.preferred_time_blocks
           : [],
+        comm_locale: registration.comm_locale === "en" ? "en" : "es",
       })
       .select("id")
       .single();
@@ -412,10 +452,73 @@ export async function convertRegistrationToStudentAction(
       metadata: { studentId: student.id, level: assignedLevel, groupId: data.groupId ?? null },
     });
 
+    // SMS de bienvenida (opcional, configurable). No debe romper la conversión.
+    try {
+      const { data: settings } = await supabase
+        .from("school_settings")
+        .select("sms_welcome_enabled, sms_welcome_msg_es, sms_welcome_msg_en")
+        .maybeSingle();
+      const welcomePhone = guardians[0]?.phone;
+      if (settings?.sms_welcome_enabled && welcomePhone) {
+        const locale: "es" | "en" = registration.comm_locale === "en" ? "en" : "es";
+        const custom = locale === "en" ? settings.sms_welcome_msg_en : settings.sms_welcome_msg_es;
+        const body = (custom && custom.trim())
+          ? custom.replace(/\{nombre\}|\{name\}/gi, firstName)
+          : welcomeSms(firstName, locale);
+        const base = await appBaseUrl();
+        await sendAndLog(supabase, {
+          to: welcomePhone,
+          body,
+          locale,
+          kind: "welcome",
+          studentId: student.id,
+          statusCallbackUrl: `${base}/api/sms/status`,
+        });
+      }
+    } catch {
+      /* El SMS de bienvenida es best-effort. */
+    }
+
     revalidatePath("/admin/registrations");
     revalidatePath("/admin/students");
     revalidatePath("/admin");
     return { ok: true, data: { studentId: student.id } };
+  } catch (error) {
+    return fail(error);
+  }
+}
+
+/**
+ * Elimina una inscripción. No borra el alumno ni el lead ya creados: solo
+ * descarta la solicitud (p. ej. duplicados o pruebas). Solo admin.
+ */
+export async function deleteRegistrationAction(
+  registrationId: string,
+): Promise<ActionResult> {
+  try {
+    const { supabase, profile } = await requireAdmin();
+
+    const { data: existing } = await supabase
+      .from("registrations")
+      .select("id, full_name, child_name")
+      .eq("id", registrationId)
+      .maybeSingle();
+    if (!existing) return { ok: false, error: "La inscripción ya no existe." };
+
+    const { error } = await supabase.from("registrations").delete().eq("id", registrationId);
+    if (error) throw error;
+
+    await recordAdminActivity(supabase, {
+      actorId: profile.id,
+      eventType: "registration_deleted",
+      entityType: "registration",
+      entityId: registrationId,
+      summary: `Inscripción eliminada: ${existing.child_name ?? existing.full_name ?? registrationId}`,
+    });
+
+    revalidatePath("/admin/registrations");
+    revalidatePath("/admin");
+    return { ok: true };
   } catch (error) {
     return fail(error);
   }

@@ -20,6 +20,7 @@ const StudentSchema = z.object({
   guardianPhone: z.string().trim().min(6, "Teléfono inválido"),
   guardianEmail: z.string().trim().email().optional().or(z.literal("")),
   relationship: z.string().trim().min(1, "Indica la relación"),
+  commLocale: z.enum(["es", "en"]).default("es"),
 });
 
 export type StudentInput = z.output<typeof StudentSchema>;
@@ -59,6 +60,7 @@ export async function createStudentAction(input: StudentInput): Promise<ActionRe
         medical_info: data.medicalInfo,
         image_consent: data.imageConsent,
         coach_notes: data.coachNotes,
+        comm_locale: data.commLocale,
       })
       .select("id")
       .single();
@@ -107,6 +109,7 @@ export async function updateStudentAction(
         medical_info: data.medicalInfo,
         image_consent: data.imageConsent,
         coach_notes: data.coachNotes,
+        comm_locale: data.commLocale,
       })
       .eq("id", studentId);
     if (studentError) throw studentError;

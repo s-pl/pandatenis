@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { Link } from "@/i18n/navigation";
-import { GraduationCap, MessageCircle, Sun, UserPlus } from "lucide-react";
+import { UserPlus } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { PageShell } from "@/components/admin/page-shell";
 import { RegistrationsTable } from "@/components/admin/registrations/registrations-table";
 import { requireStaff } from "@/lib/dal";
@@ -217,10 +215,10 @@ export default async function RegistrationsPage({
         !isAdmin
           ? "Genera fichas privadas y copia el enlace para que la familia complete todos los datos."
           : typeFilter === "campus"
-            ? "Fichas de campus creadas desde WhatsApp o completadas por las familias."
+            ? "Fichas de campus creadas desde el panel o completadas por las familias."
             : typeFilter === "escuela"
-              ? "Fichas de clases normales creadas desde WhatsApp o completadas por las familias."
-              : "Crea una ficha básica, comparte el enlace por WhatsApp y revisa aquí los datos completos cuando la familia lo rellene."
+              ? "Fichas de clases normales creadas desde el panel o completadas por las familias."
+              : "Crea una ficha básica, comparte el enlace con la familia y revisa aquí los datos completos cuando lo rellene."
       }
       meta={
         <>
@@ -234,66 +232,8 @@ export default async function RegistrationsPage({
         </>
       }
     >
-      {isAdmin && (
-        <Card>
-          <CardHeader
-            title="Envíos rápidos a familias"
-            description="Atajos al asistente de WhatsApp con tus fichas e inscripciones ya cargadas."
-          />
-          <CardBody>
-            <ul className="grid grid-cols-1 gap-2 md:grid-cols-3">
-              <ShortcutCard
-                href="/admin/whatsapp"
-                icon={<GraduationCap className="h-4 w-4" />}
-                title="Confirmación de plaza"
-                description="Avisa a las familias confirmadas con horarios y normas para arrancar el curso."
-              />
-              <ShortcutCard
-                href="/admin/whatsapp"
-                icon={<Sun className="h-4 w-4" />}
-                title="Campus de verano"
-                description="Manda la info del campus de verano con fechas y enlace de inscripción."
-              />
-              <ShortcutCard
-                href="/admin/whatsapp"
-                icon={<MessageCircle className="h-4 w-4" />}
-                title="Recordatorio general"
-                description="Reabre la inscripción y avisa a quien dejó la solicitud pendiente."
-              />
-            </ul>
-          </CardBody>
-        </Card>
-      )}
-
       {/* Histórico — direct DataTable (no wrapper card) */}
       <RegistrationsTable rows={registrations} courses={courses} groups={groups} role={profile.role} />
     </PageShell>
-  );
-}
-
-function ShortcutCard({
-  href,
-  icon,
-  title,
-  description,
-}: {
-  href: string;
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}) {
-  return (
-    <li>
-      <Link
-        href={href}
-        className="flex h-full flex-col gap-2 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:border-[var(--primary)] hover:bg-[var(--primary-soft)]"
-      >
-        <span className="grid h-9 w-9 place-items-center rounded-xl bg-[var(--primary-soft)] text-[var(--primary)]">
-          {icon}
-        </span>
-        <p className="font-semibold">{title}</p>
-        <p className="text-xs text-[var(--muted)]">{description}</p>
-      </Link>
-    </li>
   );
 }

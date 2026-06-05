@@ -45,8 +45,6 @@ function revalidateAll() {
     "/admin/payments",
     "/admin/leads",
     "/admin/registrations",
-    "/admin/whatsapp",
-    "/admin/whatsapp/chats",
     "/admin/campus",
     "/admin/settings",
   ]) {
@@ -63,12 +61,8 @@ async function wipe(supabase: SupabaseClient) {
   // students -> guardians, payments, attendance, etc. (cascade)
   // registrations -> standalone (lead_id es set null)
   // leads -> standalone
-  // whatsapp_messages -> standalone
-  // whatsapp_conversations -> standalone
   // groups -> classes cascade; students.group_id se pone a null
   const tables = [
-    "whatsapp_messages",
-    "whatsapp_conversations",
     "registrations",
     "students",
     "groups",
@@ -150,10 +144,6 @@ function phone(seed: number): string {
   // 6XX XX XX XX, evitando colisiones con números reales razonables.
   const n = 600000000 + ((seed * 137) % 99999999);
   return String(n);
-}
-
-function isoDaysAgo(days: number): string {
-  return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 }
 
 async function seed(supabase: SupabaseClient): Promise<number> {
@@ -342,57 +332,6 @@ async function seed(supabase: SupabaseClient): Promise<number> {
     .insert(registrationRows)
     .select("id");
   totalInserted += insertedRegs?.length ?? 0;
-
-  // ── 6) WhatsApp: conversaciones + mensajes ───────────────────────────
-  const convRows: Array<Record<string, unknown>> = [];
-  const wabaMsgRows: Array<Record<string, unknown>> = [];
-  const sampleFamilies = (guardianRows ?? []).slice(0, 6);
-
-  for (const [i, g] of sampleFamilies.entries()) {
-    const ph = g.phone as string;
-    convRows.push({
-      phone: ph,
-      display_name: g.full_name,
-      last_message_at: isoDaysAgo(i),
-      last_inbound_at: isoDaysAgo(i),
-      tags: i % 2 === 0 ? ["familia"] : [],
-      seed_tag: SEED_TAG,
-    });
-
-    // Hilo: outbound de plantilla + inbound respuesta + outbound seguimiento
-    wabaMsgRows.push(
-      {
-        direction: "outbound",
-        recipient_name: g.full_name,
-        recipient_phone: ph,
-        template_name: "recordatorio_clase",
-        status: "delivered",
-        related_type: "evento",
-        body_text: `Hola ${g.full_name}, te recordamos la clase de mañana a las 17:00.`,
-        payload: { body: `Hola ${g.full_name}, te recordamos la clase de mañana a las 17:00.` },
-        created_at: isoDaysAgo(i + 1),
-        sent_at: isoDaysAgo(i + 1),
-        delivered_at: isoDaysAgo(i + 1),
-        seed_tag: SEED_TAG,
-      },
-      {
-        direction: "inbound",
-        recipient_name: g.full_name,
-        recipient_phone: ph,
-        template_name: "",
-        status: "delivered",
-        related_type: "evento",
-        body_text: i % 2 === 0 ? "Perfecto, allí estaremos. ¡Gracias!" : "Hoy no podemos ir, lo siento.",
-        payload: { body: i % 2 === 0 ? "Perfecto, allí estaremos." : "Hoy no podemos ir." },
-        created_at: isoDaysAgo(i),
-        seed_tag: SEED_TAG,
-      },
-    );
-  }
-
-  if (convRows.length > 0) await supabase.from("whatsapp_conversations").insert(convRows);
-  if (wabaMsgRows.length > 0) await supabase.from("whatsapp_messages").insert(wabaMsgRows);
-  totalInserted += wabaMsgRows.length;
 
   return totalInserted;
 }

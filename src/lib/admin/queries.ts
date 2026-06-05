@@ -48,6 +48,14 @@ export type LevelDistributionPoint = { level: string; count: number; color: stri
 export type AttendanceSeriesPoint = { week: string; asistencia: number };
 export type LeadSourcePoint = { source: string; count: number };
 
+export type CampusLeadMetrics = {
+  totalLeads: number;
+  totalInscripciones: number;
+  conversionRate: number;
+  bySource: Array<{ source: string; leads: number; inscripciones: number; rate: number }>;
+  byMonth: Array<{ month: string; leads: number }>;
+};
+
 const LEVEL_COLORS: Record<string, string> = {
   Rojo: "#d65151",
   Naranja: "#ef8a3a",
@@ -345,6 +353,87 @@ export async function fetchLeadSources(supabase: SupabaseClient): Promise<LeadSo
     .sort((a, b) => b.count - a.count);
 }
 
+/** Helper: extrae el nombre del origen de un embed de lead_sources. */
+function sourceName(value: unknown): string {
+  const embed = Array.isArray(value) ? value[0] : value;
+  return (embed as { name?: string } | null)?.name ?? "Sin clasificar";
+}
+
+/**
+ * Métricas de captación y conversión del Campus: total de leads, total de
+ * inscripciones, conversión por origen (Leads vs Inscripciones) y leads por mes.
+ */
+export async function fetchCampusLeadMetrics(
+  supabase: SupabaseClient,
+): Promise<CampusLeadMetrics> {
+  const [leadsRes, registrationsRes] = await Promise.all([
+    supabase.from("leads").select("created_at, lead_sources(name)").limit(5000),
+    supabase
+      .from("registrations")
+      .select("invite_status, leads(lead_sources(name))")
+      .limit(5000),
+  ]);
+
+  const leadsRows = leadsRes.data ?? [];
+  const regRows = registrationsRes.data ?? [];
+
+  // Inscripciones reales: descartamos invitaciones sin completar (draft/sent).
+  const inscriptionRows = regRows.filter(
+    (r) => r.invite_status == null || r.invite_status === "completed",
+  );
+
+  const leadsBySource = new Map<string, number>();
+  for (const row of leadsRows) {
+    const key = sourceName(row.lead_sources);
+    leadsBySource.set(key, (leadsBySource.get(key) ?? 0) + 1);
+  }
+
+  const inscBySource = new Map<string, number>();
+  for (const row of inscriptionRows) {
+    const lead = Array.isArray(row.leads) ? row.leads[0] : row.leads;
+    const key = sourceName((lead as { lead_sources?: unknown } | null)?.lead_sources);
+    inscBySource.set(key, (inscBySource.get(key) ?? 0) + 1);
+  }
+
+  const sources = new Set<string>([...leadsBySource.keys(), ...inscBySource.keys()]);
+  const bySource = Array.from(sources)
+    .map((source) => {
+      const leads = leadsBySource.get(source) ?? 0;
+      const inscripciones = inscBySource.get(source) ?? 0;
+      const rate = leads > 0 ? Math.round((inscripciones / leads) * 100) : 0;
+      return { source, leads, inscripciones, rate };
+    })
+    .sort((a, b) => b.leads - a.leads || b.inscripciones - a.inscripciones);
+
+  // Leads por mes (últimos 6 meses, incluyendo el actual).
+  const now = new Date();
+  const monthKeys: string[] = [];
+  const monthLabels = new Map<string, string>();
+  const monthNames = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    monthKeys.push(key);
+    monthLabels.set(key, `${monthNames[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`);
+  }
+  const monthTally = new Map<string, number>(monthKeys.map((k) => [k, 0]));
+  for (const row of leadsRows) {
+    if (!row.created_at) continue;
+    const key = String(row.created_at).slice(0, 7);
+    if (monthTally.has(key)) monthTally.set(key, (monthTally.get(key) ?? 0) + 1);
+  }
+  const byMonth = monthKeys.map((key) => ({
+    month: monthLabels.get(key) ?? key,
+    leads: monthTally.get(key) ?? 0,
+  }));
+
+  const totalLeads = leadsRows.length;
+  const totalInscripciones = inscriptionRows.length;
+  const conversionRate = totalLeads > 0 ? Math.round((totalInscripciones / totalLeads) * 100) : 0;
+
+  return { totalLeads, totalInscripciones, conversionRate, bySource, byMonth };
+}
+
 export async function fetchActionCenter(supabase: SupabaseClient): Promise<ActionCenterItem[]> {
   const now = new Date();
   const today = isoDate(now);
@@ -358,8 +447,6 @@ export async function fetchActionCenter(supabase: SupabaseClient): Promise<Actio
     leadsRes,
     registrationsRes,
     classesRes,
-    templatesRes,
-    whatsappRes,
     statesRes,
   ] = await Promise.all([
     supabase
@@ -387,18 +474,6 @@ export async function fetchActionCenter(supabase: SupabaseClient): Promise<Actio
       .lte("date", today)
       .order("date", { ascending: false })
       .limit(40),
-    supabase
-      .from("message_templates")
-      .select("id, name, meta_template_name, language, meta_status, meta_review_status, meta_rejection_reason")
-      .not("meta_status", "eq", "approved")
-      .order("updated_at", { ascending: false })
-      .limit(10),
-    supabase
-      .from("whatsapp_messages")
-      .select("id, status, recipient_name, recipient_phone, template_name, error_message, dead_letter_at, created_at")
-      .or("status.eq.failed,dead_letter_at.not.is.null")
-      .order("created_at", { ascending: false })
-      .limit(10),
     supabase.from("admin_task_states").select("task_key, dismissed_at, snoozed_until"),
   ]);
 
@@ -493,35 +568,6 @@ export async function fetchActionCenter(supabase: SupabaseClient): Promise<Actio
       dueAt: row.date,
       href: "/admin/attendance",
       relatedType: "class",
-      relatedId: row.id,
-    });
-  }
-
-  for (const row of templatesRes.data ?? []) {
-    const rejected = row.meta_status === "rejected" || row.meta_review_status === "REJECTED";
-    items.push({
-      key: `template:${row.id}:${row.meta_review_status ?? row.meta_status}`,
-      type: "template_review",
-      title: rejected ? `Plantilla rechazada: ${row.name}` : `Plantilla pendiente: ${row.name}`,
-      detail: row.meta_rejection_reason ?? `${row.meta_template_name} · ${row.language}`,
-      priority: rejected ? "high" : "low",
-      dueAt: null,
-      href: "/admin/whatsapp",
-      relatedType: "message_template",
-      relatedId: row.id,
-    });
-  }
-
-  for (const row of whatsappRes.data ?? []) {
-    items.push({
-      key: `whatsapp:${row.id}:${row.dead_letter_at ?? row.status}`,
-      type: "whatsapp_queue",
-      title: row.dead_letter_at ? "Mensaje WhatsApp en dead letter" : "Mensaje WhatsApp fallido",
-      detail: `${row.recipient_name || row.recipient_phone} · ${row.error_message ?? row.template_name}`,
-      priority: row.dead_letter_at ? "high" : "medium",
-      dueAt: row.dead_letter_at ?? row.created_at,
-      href: "/admin/whatsapp",
-      relatedType: "whatsapp_message",
       relatedId: row.id,
     });
   }

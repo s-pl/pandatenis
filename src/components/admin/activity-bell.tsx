@@ -78,17 +78,20 @@ export function ActivityBell() {
     <DropdownMenu
       align="end"
       triggerLabel={t("title")}
+      onOpenChange={(open) => {
+        if (open) markSeen();
+      }}
       triggerClassName="relative grid h-8 w-8 place-items-center rounded-md text-[var(--muted)] transition-colors hover:bg-[var(--surface-muted)] hover:text-foreground"
       menuClassName="w-[320px] max-w-[88vw]"
       trigger={
-        <span onClick={markSeen} className="grid h-full w-full place-items-center">
+        <>
           <Bell className="h-4 w-4" />
           {unread > 0 && (
             <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-[var(--danger)] px-1 text-[9px] font-bold text-white">
               {unread > 9 ? "9+" : unread}
             </span>
           )}
-        </span>
+        </>
       }
     >
       <div className="border-b border-[var(--border)] px-3 py-2">

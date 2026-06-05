@@ -31,7 +31,9 @@
   /* Ink — deep happy forest. Friendly, not industrial. */
   --forest: #0E2A1F;
   --forest-soft: #1C3C2F;
-  --forest-mute: #607A6E;
+  /* Atenuado: ligeramente más oscuro que el original (#607A6E) para cumplir
+     contraste AA también sobre superficies atenuadas (cream-deep). */
+  --forest-mute: #586F65;
 
   /* Brand chromatics — bright, sunny, kid-approved. */
   --grass: #25924F;          /* vibrant grass green   */
@@ -595,6 +597,25 @@ a:focus-visible {
 }
 .wiggle-on-hover:hover { animation: wiggle 0.5s var(--ease-in-out); }
 
+/* Shimmer de los esqueletos de carga (Skeleton usa animation: skeleton). */
+@keyframes skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [style*="skeleton"] { animation: none !important; }
+}
+
+/* Entrada escalonada de filas de tabla (delay vía inline style, con tope). */
+@keyframes dt-row-in {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: none; }
+}
+.dt-row-in { animation: dt-row-in 0.36s cubic-bezier(0.22, 1, 0.36, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .dt-row-in { animation: none; }
+}
+
 img { max-width: 100%; display: block; }
 
 @media print {
@@ -618,4 +639,274 @@ img { max-width: 100%; display: block; }
   article { page-break-inside: avoid; break-inside: avoid; }
   [data-sonner-toaster],
   [role="dialog"]:not(.printable-dialog) { display: none !important; }
+
+  /* Factura: la hoja ocupa el área imprimible; los márgenes los pone @page. */
+  .no-print { display: none !important; }
+  body::before { display: none !important; }
+  .invoice-print-area { padding: 0 !important; }
+  .invoice-print-area > div {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+  }
+  .invoice-sheet {
+    width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Recibo público: ocupa la hoja, sin botón ni fondo. */
+  .receipt-page { background: #ffffff !important; padding: 0 !important; }
+  .receipt-print-btn { display: none !important; }
+  .receipt-card { box-shadow: none !important; border: 0 !important; }
+}
+
+/* ---- Recibo público "PAGADO" ------------------------------------------- */
+.receipt-page {
+  min-height: 100vh;
+  background: #eef2f0;
+  color-scheme: light;
+  display: flex;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 48px) 12px;
+}
+.receipt-page-inner {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.receipt-card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #ffffff;
+  border: 1px solid #e3e8e5;
+  border-radius: 10px;
+  box-shadow: 0 18px 50px -22px rgba(14, 42, 31, 0.4);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.receipt-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 46%;
+  transform: translate(-50%, -50%);
+  opacity: 0.16;
+  object-fit: contain;
+  pointer-events: none;
+}
+.receipt-stamp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  font-weight: 900;
+  font-size: clamp(3rem, 14vw, 7rem);
+  letter-spacing: 0.04em;
+  color: #f1685a;
+  opacity: 0.78;
+  text-transform: uppercase;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.receipt-body {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  padding: clamp(20px, 5vw, 48px);
+  text-align: left;
+}
+.receipt-concept,
+.receipt-school {
+  font-size: clamp(1.1rem, 3.4vw, 2rem);
+  font-weight: 400;
+  color: #1c2722;
+  line-height: 1.15;
+}
+.receipt-school {
+  margin-top: clamp(10px, 3vw, 26px);
+}
+.receipt-month {
+  margin-top: clamp(14px, 4vw, 36px);
+  font-size: clamp(1.2rem, 3.8vw, 2.1rem);
+  font-weight: 800;
+  color: #11201a;
+}
+.receipt-meta {
+  margin-top: clamp(14px, 3vw, 26px);
+  display: grid;
+  gap: 6px;
+  font-size: clamp(0.78rem, 2vw, 0.95rem);
+}
+.receipt-meta div {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+.receipt-meta dt {
+  color: #6b7a73;
+  font-weight: 600;
+}
+.receipt-meta dd {
+  color: #11201a;
+  font-weight: 700;
+}
+.receipt-print-btn {
+  border: 0;
+  border-radius: 999px;
+  background: #0e2a1f;
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  padding: 12px 26px;
+  cursor: pointer;
+  box-shadow: 0 10px 24px -12px rgba(14, 42, 31, 0.6);
+}
+.receipt-print-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* ---- Cartel público de promoción --------------------------------------- */
+.promo-page {
+  min-height: 100vh;
+  background: #0e2a1f;
+  color-scheme: light;
+  display: flex;
+  justify-content: center;
+  padding: clamp(16px, 4vw, 40px) 14px clamp(40px, 8vw, 72px);
+}
+.promo-inner {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(18px, 4vw, 28px);
+}
+.promo-poster {
+  width: 100%;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.6);
+  background: #fff;
+  object-fit: contain;
+}
+.promo-poster--placeholder {
+  aspect-ratio: 3 / 4;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+  font-weight: 800;
+  font-size: clamp(1.3rem, 5vw, 2rem);
+  color: #0e2a1f;
+}
+.promo-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+  padding: 16px 28px;
+  border-radius: 999px;
+  background: #25d366;
+  color: #06281a;
+  font-weight: 900;
+  font-size: clamp(1rem, 3.6vw, 1.25rem);
+  text-decoration: none;
+  box-shadow: 0 16px 34px -14px rgba(37, 211, 102, 0.7);
+  transition: transform 0.15s ease;
+}
+.promo-cta:hover {
+  transform: translateY(-2px);
+}
+.promo-cta--disabled {
+  background: #f4d35e;
+  color: #4a3b00;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* Landing del QR del Campus (/c/[source]) — pantalla de captación de leads. */
+.campus-landing {
+  min-height: 100svh;
+  background: var(--grass, #0e2a1f);
+  color-scheme: light;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(20px, 6vw, 56px) 16px;
+}
+.campus-landing-inner {
+  width: 100%;
+  max-width: 440px;
+}
+.campus-landing-card {
+  background: var(--cream-soft, #fff);
+  border-radius: 24px;
+  padding: clamp(24px, 6vw, 40px);
+  box-shadow: 0 28px 70px -30px rgba(0, 0, 0, 0.55);
+}
+.campus-landing-lang {
+  width: 100%;
+  padding: 16px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--rule, rgba(14, 42, 31, 0.16));
+  background: #fff;
+  font-weight: 800;
+  font-size: clamp(1.05rem, 4vw, 1.25rem);
+  color: var(--forest, #0e2a1f);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.campus-landing-lang:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px -16px rgba(0, 0, 0, 0.4);
+}
+.campus-landing-input {
+  width: 100%;
+  padding: 13px 15px;
+  border-radius: 12px;
+  border: 1px solid var(--rule, rgba(14, 42, 31, 0.18));
+  background: #fff;
+  font-size: 16px; /* evita el zoom automático en iOS */
+  color: var(--forest, #0e2a1f);
+}
+.campus-landing-input:focus {
+  outline: 2px solid var(--grass, #0e2a1f);
+  outline-offset: 1px;
+}
+.campus-landing-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 15px 24px;
+  border-radius: 999px;
+  background: #25d366;
+  color: #06281a;
+  font-weight: 900;
+  font-size: clamp(1rem, 3.6vw, 1.15rem);
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 16px 34px -14px rgba(37, 211, 102, 0.7);
+  transition: transform 0.15s ease;
+}
+.campus-landing-cta:hover {
+  transform: translateY(-2px);
+}
+.campus-landing-cta:disabled {
+  opacity: 0.7;
+  cursor: default;
+  transform: none;
 }

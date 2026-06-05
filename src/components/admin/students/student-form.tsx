@@ -37,6 +37,7 @@ const EMPTY: StudentInput = {
   guardianPhone: "",
   guardianEmail: "",
   relationship: "Madre",
+  commLocale: "es",
 };
 
 export function StudentForm({
@@ -156,7 +157,7 @@ export function StudentForm({
               <option>Otro</option>
             </Select>
           </Field>
-          <Field label="Teléfono móvil" required hint="Se usará para WhatsApp" error={errors.guardianPhone?.[0]}>
+          <Field label="Teléfono móvil" required hint="Se usará para contactar con la familia" error={errors.guardianPhone?.[0]}>
             <Input
               value={values.guardianPhone}
               onChange={(e) => set("guardianPhone", e.target.value)}
@@ -170,6 +171,20 @@ export function StudentForm({
               onChange={(e) => set("guardianEmail", e.target.value)}
               placeholder="opcional"
             />
+          </Field>
+          <Field
+            label="Idioma de comunicación"
+            required
+            hint="Idioma en el que la familia recibirá los SMS automáticos"
+            error={errors.commLocale?.[0]}
+          >
+            <Select
+              value={values.commLocale}
+              onChange={(e) => set("commLocale", e.target.value as StudentInput["commLocale"])}
+            >
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </Select>
           </Field>
         </div>
       </div>

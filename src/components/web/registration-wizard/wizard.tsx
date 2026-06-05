@@ -19,7 +19,7 @@ import {
   Trash2,
   User,
 } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import {
   checkRegistrationEmailAction,
@@ -87,6 +87,7 @@ export function RegistrationWizard({
   initialStudent,
 }: Props) {
   const t = useTranslations("wizard");
+  const activeLocale = useLocale();
 
   const availableCourses = useMemo(
     () =>
@@ -126,6 +127,7 @@ export function RegistrationWizard({
   const [childGender, setChildGender] = useState<"" | "masculino" | "femenino" | "otro">("");
   const [relations, setRelations] = useState<Relation[]>([]);
   const [relationsOpen, setRelationsOpen] = useState(true);
+  const [relationError, setRelationError] = useState<string | null>(null);
   const [draftRelation, setDraftRelation] = useState<Relation>({
     fullName: initialStudent?.guardianName ?? "",
     relationship: "",
@@ -141,6 +143,10 @@ export function RegistrationWizard({
     Array<"tarde-temprano" | "tarde-media" | "tarde-tardia" | "sabado-manana">
   >([]);
   const [schedulingNotes, setSchedulingNotes] = useState("");
+  const [referral, setReferral] = useState("");
+  const [commLocale, setCommLocale] = useState<"es" | "en">(
+    activeLocale === "en" ? "en" : "es",
+  );
 
   const [signerFirstName, setSignerFirstName] = useState("");
   const [signerLastName, setSignerLastName] = useState("");
@@ -189,9 +195,15 @@ export function RegistrationWizard({
       draftRelation.relationship.trim().length < 2 ||
       draftRelation.phone.trim().length < 6
     ) {
+      setRelationError(t("student.relations.errorIncomplete"));
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(draftRelation.email.trim())) {
+      setRelationError(t("student.relations.errorEmail"));
       return;
     }
     if (relations.length >= 3) return;
+    setRelationError(null);
     setRelations((r) => [...r, draftRelation]);
     setDraftRelation({ fullName: "", relationship: "", phone: "", email: "" });
   };
@@ -210,7 +222,7 @@ export function RegistrationWizard({
         !!childGender &&
         relations.length >= 1
       );
-    if (current === "additional") return true;
+    if (current === "additional") return !!referral;
     if (current === "terms")
       return (
         signerFirstName.trim().length >= 2 &&
@@ -228,6 +240,7 @@ export function RegistrationWizard({
     childBirthDate,
     childGender,
     relations,
+    referral,
     signerFirstName,
     signerLastName,
     signatureData,
@@ -255,6 +268,8 @@ export function RegistrationWizard({
       signerLastName,
       signatureData,
       consentMultimedia,
+      commLocale,
+      referral: referral as RegistrationInput["referral"],
       company,
       preferredDays,
       preferredTimeBlocks,
@@ -274,14 +289,13 @@ export function RegistrationWizard({
           <CheckCircle2 className="h-10 w-10 text-[var(--grass-deep)]" strokeWidth={2.2} />
         </div>
         <h2 className="mt-6 headline text-[clamp(1.6rem,4vw,2.2rem)] text-[var(--forest)]">
-          {t("success.title")}
+          {childFirstName.trim()
+            ? t("success.title", { name: childFirstName.trim() })
+            : t("success.titleFallback")}
         </h2>
-        <p
-          className="mx-auto mt-4 max-w-md text-[14.5px] leading-[1.7] text-[var(--forest-soft)]"
-          dangerouslySetInnerHTML={{
-            __html: t("success.description", { course: course?.label ?? "" }),
-          }}
-        />
+        <p className="mx-auto mt-4 max-w-md text-[14.5px] leading-[1.7] text-[var(--forest-soft)]">
+          {t("success.description")}
+        </p>
         <Link href="/" className="mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-full border border-[var(--rule)] bg-[var(--coral)] px-6 text-[13.5px] font-extrabold text-white shadow-[var(--shadow-card)] transition-transform hover:-translate-y-0.5">
           {t("success.backHome")}
           <ArrowRight className="h-4 w-4" strokeWidth={2.4} />
@@ -413,6 +427,7 @@ export function RegistrationWizard({
             setDraftRelation={setDraftRelation}
             addRelation={addRelation}
             removeRelation={removeRelation}
+            relationError={relationError}
           />
         )}
 
@@ -431,6 +446,10 @@ export function RegistrationWizard({
             setPreferredTimeBlocks={setPreferredTimeBlocks}
             schedulingNotes={schedulingNotes}
             setSchedulingNotes={setSchedulingNotes}
+            commLocale={commLocale}
+            setCommLocale={setCommLocale}
+            referral={referral}
+            setReferral={setReferral}
           />
         )}
 
@@ -547,17 +566,10 @@ function StepInfo({
         {t("hello")}
       </p>
 
-      <p className="mt-4 text-[15px] leading-[1.7] text-[var(--forest)] sm:text-[16px]">
-        {t("intro")}
-      </p>
-
       {course ? (
         <>
           <p className="mt-4 text-[15px] leading-[1.7] text-[var(--forest)] sm:text-[16px]">
-            {renderIntro(course.intro)}
-          </p>
-          <p className="mt-4 text-[15px] leading-[1.7] text-[var(--forest)] sm:text-[16px]">
-            {t("alsoPlatform")}
+            {renderIntro(t("thanks"))}
           </p>
           {!locked && availableCourses.length > 1 && (
             <button
@@ -670,6 +682,7 @@ function StepStudent(props: {
   setDraftRelation: (v: Relation) => void;
   addRelation: () => void;
   removeRelation: (i: number) => void;
+  relationError: string | null;
 }) {
   const t = useTranslations("wizard");
 
@@ -882,7 +895,7 @@ function StepStudent(props: {
                     placeholder={t("student.relations.phonePlaceholder")}
                   />
                 </FormField>
-                <FormField label={t("student.relations.email")}>
+                <FormField label={t("student.relations.email")} required>
                   <input
                     type="email"
                     className={inputCls}
@@ -896,6 +909,12 @@ function StepStudent(props: {
                     placeholder={t("student.relations.emailPlaceholder")}
                   />
                 </FormField>
+                {props.relationError && (
+                  <p className="sm:col-span-2 flex items-center gap-1.5 text-[12.5px] font-bold text-[var(--coral-deep)]">
+                    <AlertTriangle aria-hidden className="h-3.5 w-3.5 shrink-0" strokeWidth={2.2} />
+                    {props.relationError}
+                  </p>
+                )}
                 <button
                   type="button"
                   onClick={props.addRelation}
@@ -941,6 +960,10 @@ function StepAdditional(props: {
   setPreferredTimeBlocks: (v: TimeBlock[]) => void;
   schedulingNotes: string;
   setSchedulingNotes: (v: string) => void;
+  commLocale: "es" | "en";
+  setCommLocale: (v: "es" | "en") => void;
+  referral: string;
+  setReferral: (v: string) => void;
 }) {
   const t = useTranslations("wizard.additional");
 
@@ -970,6 +993,35 @@ function StepAdditional(props: {
       <p className="mt-1 text-[13.5px] text-[var(--forest-mute)]">{t("hint")}</p>
 
       <div className="mt-6 grid gap-5">
+        <FormField label={t("referral.label")} required>
+          <select
+            className={ta}
+            value={props.referral}
+            onChange={(e) => props.setReferral(e.target.value)}
+          >
+            <option value="" disabled>
+              {t("referral.placeholder")}
+            </option>
+            <option value="carteles">{t("referral.options.carteles")}</option>
+            <option value="flyers">{t("referral.options.flyers")}</option>
+            <option value="chapas">{t("referral.options.chapas")}</option>
+            <option value="google_web">{t("referral.options.google_web")}</option>
+            <option value="instagram">{t("referral.options.instagram")}</option>
+            <option value="facebook">{t("referral.options.facebook")}</option>
+            <option value="recomendacion">{t("referral.options.recomendacion")}</option>
+            <option value="otro">{t("referral.options.otro")}</option>
+          </select>
+        </FormField>
+        <FormField label={t("commLocale.label")} required>
+          <select
+            className={ta}
+            value={props.commLocale}
+            onChange={(e) => props.setCommLocale(e.target.value === "en" ? "en" : "es")}
+          >
+            <option value="es">{t("commLocale.es")}</option>
+            <option value="en">{t("commLocale.en")}</option>
+          </select>
+        </FormField>
         <FormField label={t("allergies")}>
           <textarea
             rows={3}

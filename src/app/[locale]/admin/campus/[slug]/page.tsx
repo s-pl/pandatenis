@@ -6,7 +6,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageShell } from "@/components/admin/page-shell";
-import { QuickTemplateButton } from "@/components/admin/whatsapp/quick-template-button";
 import { PaymentsManager } from "@/components/admin/payments/payments-manager";
 import { RegistrationInviteDialog } from "@/components/admin/registrations/registration-invite-dialog";
 import {
@@ -16,7 +15,7 @@ import {
 import { CopyLinkButton } from "@/components/admin/campus/copy-link-button";
 import { Link } from "@/i18n/navigation";
 import { requireAdmin } from "@/lib/dal";
-import { formatLongDate, formatMoney, normalizeWhatsappNumber } from "@/lib/format";
+import { formatLongDate, formatMoney } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +38,76 @@ const STATUS_TONE: Record<"pendiente" | "confirmada" | "convertida", "warning" |
   confirmada: "info",
   convertida: "success",
 };
+
+type CampusRegistration = {
+  id: string;
+  full_name: string | null;
+  child_name: string | null;
+  child_last_name: string | null;
+  status: string | null;
+  type: string | null;
+  submitted_at: string;
+};
+
+function RegistrationGroup({
+  title,
+  tone,
+  count,
+  items,
+  emptyText,
+}: {
+  title: string;
+  tone: "warning" | "success";
+  count: number;
+  items: CampusRegistration[];
+  emptyText: string;
+}) {
+  return (
+    <div>
+      <div className="mb-2 flex items-center gap-2">
+        <span
+          className={`inline-flex h-2 w-2 rounded-full ${
+            tone === "success" ? "bg-[var(--success)]" : "bg-[var(--warning)]"
+          }`}
+        />
+        <h4 className="text-[12px] font-bold uppercase tracking-wider text-[var(--muted)]">
+          {title}
+        </h4>
+        <Badge tone={tone}>{count}</Badge>
+      </div>
+      {items.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-[var(--border)] px-3 py-3 text-[12px] text-[var(--muted)]">
+          {emptyText}
+        </p>
+      ) : (
+        <ul className="divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] px-3">
+          {items.map((r) => {
+            const child = [r.child_name, r.child_last_name].filter(Boolean).join(" ").trim();
+            const family = r.full_name?.trim() || "Familia pendiente";
+            const status = (r.status as "pendiente" | "confirmada" | "convertida") ?? "pendiente";
+            return (
+              <li
+                key={r.id}
+                className="flex flex-wrap items-center justify-between gap-3 py-2.5"
+              >
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[13px] font-semibold">{child || "Ficha pendiente"}</p>
+                  <p className="truncate text-[11.5px] text-[var(--muted)]">
+                    {family} · {formatLongDate(r.submitted_at)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  {r.type === "ambos" && <Badge tone="primary">Ambos</Badge>}
+                  <Badge tone={STATUS_TONE[status]}>{STATUS_LABEL[status]}</Badge>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export default async function CampusDetailPage({
   params,
@@ -95,30 +164,9 @@ export default async function CampusDetailPage({
   const paymentRows = paymentsRes.data ?? [];
   const paymentIds = paymentRows.map((p) => p.id);
 
-  const [receiptsRes, remindersRes] = await Promise.all([
-    paymentIds.length
-      ? supabase
-          .from("receipts")
-          .select("payment_id, receipt_number")
-          .in("payment_id", paymentIds)
-      : Promise.resolve({ data: [] as { payment_id: string; receipt_number: string }[] }),
-    paymentIds.length
-      ? supabase
-          .from("whatsapp_messages")
-          .select("related_id, status, created_at, sent_at, error_message")
-          .eq("related_type", "recibo")
-          .in("related_id", paymentIds)
-          .order("created_at", { ascending: false })
-      : Promise.resolve({
-          data: [] as {
-            related_id: string;
-            status: string;
-            created_at: string;
-            sent_at: string | null;
-            error_message: string | null;
-          }[],
-        }),
-  ]);
+  const receiptsRes = paymentIds.length
+    ? await supabase.from("receipts").select("payment_id, receipt_number").in("payment_id", paymentIds)
+    : { data: [] as { payment_id: string; receipt_number: string }[] };
 
   const students = (studentsRes.data ?? []).map((s) => {
     const guardian = Array.isArray(s.guardians) ? s.guardians[0] : s.guardians;
@@ -133,19 +181,9 @@ export default async function CampusDetailPage({
   const receiptByPayment = new Map(
     (receiptsRes.data ?? []).map((r) => [r.payment_id, r.receipt_number]),
   );
-  const reminderByPayment = new Map<string, { status: string; at: string; error: string | null }>();
-  for (const r of remindersRes.data ?? []) {
-    if (!r.related_id || reminderByPayment.has(r.related_id)) continue;
-    reminderByPayment.set(r.related_id, {
-      status: r.status,
-      at: r.sent_at ?? r.created_at,
-      error: r.error_message ?? null,
-    });
-  }
 
   const payments = paymentRows.map((p) => {
     const student = studentById.get(p.student_id);
-    const reminder = reminderByPayment.get(p.id);
     return {
       id: p.id as string,
       studentId: p.student_id as string,
@@ -159,9 +197,6 @@ export default async function CampusDetailPage({
       status: p.status as "pagado" | "pendiente" | "atrasado",
       method: p.method as "efectivo" | "transferencia" | "bizum" | null,
       receiptNumber: receiptByPayment.get(p.id) ?? null,
-      lastReminderAt: reminder?.at ?? null,
-      lastReminderStatus: reminder?.status ?? null,
-      lastReminderError: reminder?.error ?? null,
     };
   });
 
@@ -173,6 +208,12 @@ export default async function CampusDetailPage({
     .reduce((acc, p) => acc + p.amount, 0);
 
   const registrations = registrationsRes.data ?? [];
+  const pendingRegs = registrations.filter(
+    (r) => ((r.status as string) ?? "pendiente") === "pendiente",
+  );
+  const completedRegs = registrations.filter(
+    (r) => ((r.status as string) ?? "pendiente") !== "pendiente",
+  );
 
   // Enlace público de inscripción de este campus (absoluto para compartir).
   const h = await headers();
@@ -233,10 +274,11 @@ export default async function CampusDetailPage({
               description="Cuando una familia rellene el formulario de este campus aparecerá aquí."
             />
           ) : (
-            <>
-              <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+            <div className="space-y-5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="text-[12px] text-[var(--muted)]">
-                  {registrations.length} {registrations.length === 1 ? "inscripción" : "inscripciones"}
+                  {pendingRegs.length} pendiente{pendingRegs.length === 1 ? "" : "s"} ·{" "}
+                  {completedRegs.length} completada{completedRegs.length === 1 ? "" : "s"}
                 </span>
                 <Link
                   href="/admin/registrations?type=campus"
@@ -246,38 +288,22 @@ export default async function CampusDetailPage({
                   <ArrowUpRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
-              <ul className="divide-y divide-[var(--border)]">
-                {registrations.map((r) => {
-                  const child = [r.child_name, r.child_last_name].filter(Boolean).join(" ").trim();
-                  const family = r.full_name?.trim() || "Familia pendiente";
-                  const status = (r.status as "pendiente" | "confirmada" | "convertida") ?? "pendiente";
-                  return (
-                    <li
-                      key={r.id}
-                      className="flex flex-wrap items-center justify-between gap-3 py-2.5 first:pt-0 last:pb-0"
-                    >
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-[13px] font-semibold">{child || "Ficha pendiente"}</p>
-                        <p className="truncate text-[11.5px] text-[var(--muted)]">
-                          {family} · {formatLongDate(r.submitted_at)}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {r.type === "ambos" && <Badge tone="primary">Ambos</Badge>}
-                        <Badge tone={STATUS_TONE[status]}>{STATUS_LABEL[status]}</Badge>
-                        {r.phone && (
-                          <QuickTemplateButton
-                            phone={normalizeWhatsappNumber(r.phone)}
-                            recipientName={family}
-                            defaultVariables={{ "1": family, "2": child || "tu hijo/a" }}
-                          />
-                        )}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            </>
+
+              <RegistrationGroup
+                title="Pendientes"
+                tone="warning"
+                count={pendingRegs.length}
+                items={pendingRegs as CampusRegistration[]}
+                emptyText="No hay inscripciones pendientes."
+              />
+              <RegistrationGroup
+                title="Completadas"
+                tone="success"
+                count={completedRegs.length}
+                items={completedRegs as CampusRegistration[]}
+                emptyText="Todavía no hay inscripciones confirmadas o convertidas."
+              />
+            </div>
           )}
         </CardBody>
       </Card>

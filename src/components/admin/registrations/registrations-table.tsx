@@ -14,11 +14,11 @@ import {
   Mail,
   Phone,
   Search,
+  Trash2,
   UserPlus,
   UserRound,
   Users,
 } from "lucide-react";
-import { QuickTemplateButton } from "@/components/admin/whatsapp/quick-template-button";
 import { Link, useRouter } from "@/i18n/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -28,11 +28,13 @@ import { DataTable, type Column } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { FilterChip } from "@/components/ui/filter-chip";
 import { Modal } from "@/components/ui/modal";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, Input, Select } from "@/components/ui/input";
-import { formatLongDate, formatPhoneEs, formatShortDate, normalizeWhatsappNumber } from "@/lib/format";
+import { formatLongDate, formatPhoneEs, formatShortDate } from "@/lib/format";
 import { RegistrationInviteDialog } from "@/components/admin/registrations/registration-invite-dialog";
 import {
   convertRegistrationToStudentAction,
+  deleteRegistrationAction,
   markRegistrationInviteSentAction,
 } from "@/lib/admin/actions/registrations";
 import type { AdminRole } from "@/lib/admin/roles";
@@ -221,7 +223,23 @@ export function RegistrationsTable({
   const [conversionLevel, setConversionLevel] = useState<Level>("Rojo");
   const [conversionGroupId, setConversionGroupId] = useState("");
   const [convertingId, setConvertingId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<Row | null>(null);
   const [pending, startTransition] = useTransition();
+
+  function confirmDelete() {
+    if (!deleting) return;
+    const target = deleting;
+    setDeleting(null);
+    startTransition(async () => {
+      const result = await deleteRegistrationAction(target.id);
+      if (result.ok) {
+        toast.success("Inscripción eliminada");
+        router.refresh();
+      } else {
+        toast.error("No se ha podido eliminar", { description: result.error });
+      }
+    });
+  }
 
   async function updateStatus(row: Row, next: Row["status"]) {
     if (!isAdmin) return;
@@ -487,13 +505,6 @@ export function RegistrationsTable({
               >
                 <Phone className="h-3.5 w-3.5" />
               </a>
-              <span onClick={(e) => e.stopPropagation()}>
-                <QuickTemplateButton
-                  phone={normalizeWhatsappNumber(r.phone)}
-                  recipientName={familyLabel(r)}
-                  defaultVariables={{ "1": familyLabel(r), "2": childLabel(r) }}
-                />
-              </span>
             </>
           )}
           {isAdmin && canCreateStudent(r) && (
@@ -518,6 +529,20 @@ export function RegistrationsTable({
             >
               Ver alumno
             </Link>
+          )}
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setDeleting(r);
+              }}
+              className="grid h-7 w-7 place-items-center rounded-full text-[var(--muted)] hover:bg-[var(--danger-soft)] hover:text-[var(--danger)]"
+              title="Eliminar inscripción"
+              aria-label="Eliminar inscripción"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
           )}
         </div>
       ),
@@ -600,14 +625,6 @@ export function RegistrationsTable({
                   >
                     <Phone className="h-3.5 w-3.5" />
                   </a>
-                  <span onClick={(e) => e.stopPropagation()}>
-                    <QuickTemplateButton
-                      phone={normalizeWhatsappNumber(r.phone)}
-                      recipientName={familyLabel(r)}
-                      defaultVariables={{ "1": familyLabel(r), "2": childLabel(r) }}
-                      size="md"
-                    />
-                  </span>
                 </>
               )}
               {r.inviteToken && r.inviteStatus !== "completed" && (
@@ -648,6 +665,19 @@ export function RegistrationsTable({
                 >
                   <Eye className="h-3.5 w-3.5" />
                   Ver solicitud
+                </button>
+              )}
+              {isAdmin && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDeleting(r);
+                  }}
+                  className="inline-flex h-9 items-center gap-1.5 rounded-md bg-[var(--surface-muted)] px-3 text-[12px] font-semibold text-[var(--danger)] active:bg-[var(--danger-soft)]"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Eliminar
                 </button>
               )}
               <div className="flex-1" />
@@ -709,6 +739,18 @@ export function RegistrationsTable({
         onConfirm={() => {
           if (conversionTarget) convertToStudent(conversionTarget);
         }}
+      />
+      <ConfirmDialog
+        open={!!deleting}
+        onClose={() => setDeleting(null)}
+        onConfirm={confirmDelete}
+        title="¿Eliminar inscripción?"
+        description={
+          deleting
+            ? `Vas a eliminar la inscripción de ${childLabel(deleting)}. No se borra el alumno ni el contacto ya creados. Esta acción no se puede deshacer.`
+            : ""
+        }
+        confirmLabel="Sí, eliminar"
       />
     </>
   );
